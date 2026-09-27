@@ -24,6 +24,33 @@
     </div>
   </div>
 
+<!-- ===== ÉCRAN LOGIN ADMIN ===== -->
+<div id="ecran-login-admin" class="ecran">
+  <header class="entete">
+    <button class="btn-retour" onclick="afficherEcran('connexion')">⬅️</button>
+    <h2>👑 Administrateur</h2>
+    <span style="width:40px"></span>
+  </header>
+
+  <div class="contenu">
+    <div class="formulaire" style="margin-top:20px;">
+      <h3>🔐 Accès sécurisé</h3>
+      <p style="color:#666; font-size:14px; margin-bottom:15px;">
+        Entrez le code d'accès administrateur
+      </p>
+      
+      <label>Code d'accès</label>
+      <input type="password" id="login-admin-code" placeholder="••••••••" autocomplete="off">
+
+      <button class="btn-save" onclick="connecterAdmin()">
+        🔓 Se connecter
+      </button>
+    </div>
+    
+    <p id="login-admin-erreur" style="color:#F44336; text-align:center; font-weight:600;"></p>
+  </div>
+</div>
+
   <!-- ===== ÉCRAN ADMIN ===== -->
   <div id="ecran-admin" class="ecran">
     <header class="entete">
@@ -39,6 +66,7 @@
       <button class="btn-action" onclick="ouvrirLivraisonsGlobales()">✅ Livraisons</button>
         <button class="btn-action" onclick="ouvrirCommandesGlobales()">📦 Commandes</button>
      <button class="btn-action" onclick="ouvrirCarteRevendeurs()">🗺️ Carte</button>
+        <button class="btn-action" onclick="ouvrirParametres()">⚙️ Paramètres</button>
       </div>
     </div>
   </div>
@@ -357,6 +385,39 @@
       </div>
     </div>
   </div>
+<!-- ===== ÉCRAN PARAMÈTRES ===== -->
+<div id="ecran-parametres" class="ecran">
+  <header class="entete">
+    <button class="btn-retour" onclick="afficherEcran('admin')">⬅️</button>
+    <h2>⚙️ Paramètres</h2>
+    <span style="width:40px"></span>
+  </header>
+
+  <div class="contenu">
+    <div class="formulaire">
+      <h3>🔐 Changer le code administrateur</h3>
+      <p style="color:#666; font-size:14px; margin-bottom:15px;">
+        Le code actuel protège votre accès admin.
+      </p>
+      
+      <label>Code actuel</label>
+      <input type="password" id="pwd-actuel" placeholder="••••••••" autocomplete="off">
+      
+      <label>Nouveau code</label>
+      <input type="password" id="pwd-nouveau" placeholder="••••••••" autocomplete="off">
+      
+      <label>Confirmer le nouveau code</label>
+      <input type="password" id="pwd-confirme" placeholder="••••••••" autocomplete="off">
+
+      <button class="btn-save" onclick="changerCodeAdmin()">
+        💾 Enregistrer le nouveau code
+      </button>
+    </div>
+    
+    <p id="param-erreur" style="color:#F44336; text-align:center; font-weight:600; margin-top:15px;"></p>
+    <p id="param-succes" style="color:#4CAF50; text-align:center; font-weight:600; margin-top:15px;"></p>
+  </div>
+</div>
 
   <!-- ===== MODALE HISTORIQUE ===== -->
   <div id="modal-historique" class="modal">
@@ -392,10 +453,78 @@
       const ecran = document.getElementById('ecran-' + nom);
       if (ecran) ecran.classList.add('actif');
     }
-function choisirRole(role) {
-  if (role === 'admin') {
+   // ==========================================
+//   LOGIN ADMIN
+// ==========================================
+
+let tentativesAdmin = 0;
+let adminBloque = false;
+let adminBloqueJusqua = 0;
+
+async function connecterAdmin() {
+  const codeSaisi = document.getElementById('login-admin-code').value;
+  const erreur = document.getElementById('login-admin-erreur');
+  
+  erreur.textContent = '';
+  
+  if (adminBloque && Date.now() < adminBloqueJusqua) {
+    const secondesRestantes = Math.ceil((adminBloqueJusqua - Date.now()) / 1000);
+    erreur.textContent = `⏸️ Trop d'essais. Attendez ${secondesRestantes} secondes.`;
+    return;
+  }
+  
+  if (adminBloque && Date.now() >= adminBloqueJusqua) {
+    adminBloque = false;
+    tentativesAdmin = 0;
+  }
+  
+  if (!codeSaisi) {
+    erreur.textContent = '❌ Entrez le code d\'accès';
+    return;
+  }
+  
+  try {
+    const docRef = await db.collection('parametres').doc('admin').get();
+    let codeAttendu = 'makanda2026';
+    
+    if (docRef.exists && docRef.data().codeAdmin) {
+      codeAttendu = docRef.data().codeAdmin;
+    } else {
+      await db.collection('parametres').doc('admin').set({
+        codeAdmin: 'makanda2026',
+        dateCreation: new Date().toISOString()
+      });
+    }
+    
+    if (codeSaisi !== codeAttendu) {
+      tentativesAdmin++;
+      erreur.textContent = `❌ Code incorrect (${tentativesAdmin}/5)`;
+      document.getElementById('login-admin-code').value = '';
+      
+      if (tentativesAdmin >= 5) {
+        adminBloque = true;
+        adminBloqueJusqua = Date.now() + 5 * 60 * 1000;
+        erreur.textContent = '⏸️ Trop d\'essais. Attendez 5 minutes.';
+      }
+      return;
+    }
+    
+    tentativesAdmin = 0;
+    adminBloque = false;
+    console.log('✅ Admin connecté');
+    document.getElementById('login-admin-code').value = '';
     afficherEcran('admin');
     chargerInfosAdmin();
+    
+  } catch (err) {
+    console.error(err);
+    erreur.textContent = '⚠️ Erreur : ' + err.message;
+  }
+}
+ 
+function choisirRole(role) {
+  if (role === 'admin') {
+  afficherEcran('login-admin');
   } else if (role === 'livreur') {
     afficherEcran('login-livreur');
     chargerLivreursDansLogin();
@@ -766,6 +895,84 @@ async function chargerLivraisonsGlobales() {
 // ==========================================
 
 let carteGlobale = null;
+
+// ==========================================
+//   PARAMÈTRES - CHANGER CODE ADMIN
+// ==========================================
+
+function ouvrirParametres() {
+  afficherEcran('parametres');
+  document.getElementById('pwd-actuel').value = '';
+  document.getElementById('pwd-nouveau').value = '';
+  document.getElementById('pwd-confirme').value = '';
+  document.getElementById('param-erreur').textContent = '';
+  document.getElementById('param-succes').textContent = '';
+}
+
+async function changerCodeAdmin() {
+  const actuel = document.getElementById('pwd-actuel').value;
+  const nouveau = document.getElementById('pwd-nouveau').value;
+  const confirme = document.getElementById('pwd-confirme').value;
+  const erreur = document.getElementById('param-erreur');
+  const succes = document.getElementById('param-succes');
+  
+  erreur.textContent = '';
+  succes.textContent = '';
+  
+  if (!actuel || !nouveau || !confirme) {
+    erreur.textContent = '❌ Tous les champs sont obligatoires';
+    return;
+  }
+  
+  if (nouveau.length < 6) {
+    erreur.textContent = '❌ Le nouveau code doit faire au moins 6 caractères';
+    return;
+  }
+  
+  if (nouveau !== confirme) {
+    erreur.textContent = '❌ Les 2 codes ne correspondent pas';
+    return;
+  }
+  
+  if (nouveau === actuel) {
+    erreur.textContent = '❌ Le nouveau code est identique à l\'ancien';
+    return;
+  }
+  
+  try {
+    const docRef = await db.collection('parametres').doc('admin').get();
+    let codeActuel = 'makanda2026';
+    
+    if (docRef.exists && docRef.data().codeAdmin) {
+      codeActuel = docRef.data().codeAdmin;
+    }
+    
+    if (actuel !== codeActuel) {
+      erreur.textContent = '❌ Code actuel incorrect';
+      return;
+    }
+    
+    await db.collection('parametres').doc('admin').set({
+      codeAdmin: nouveau,
+      dateModification: new Date().toISOString()
+    }, { merge: true });
+    
+    succes.textContent = '✅ Code changé avec succès !';
+    document.getElementById('pwd-actuel').value = '';
+    document.getElementById('pwd-nouveau').value = '';
+    document.getElementById('pwd-confirme').value = '';
+    
+    console.log('✅ Code admin changé');
+    
+    setTimeout(() => {
+      afficherEcran('admin');
+    }, 2000);
+    
+  } catch (err) {
+    console.error(err);
+    erreur.textContent = '⚠️ Erreur : ' + err.message;
+  }
+}
 
 function ouvrirCarteRevendeurs() {
   afficherEcran('carte');
