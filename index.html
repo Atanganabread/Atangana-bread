@@ -13,7 +13,7 @@
   <!-- ===== ÉCRAN CONNEXION ===== -->
   <div id="ecran-connexion" class="ecran actif">
     <div class="logo">
-      <img src="https://i.ibb.co/Kc7PhPzh/IMG-20260922-125622.jpg" alt="">
+      <img src="https://i.ibb.co/jZr2JGGQ/bobolo.jpg" alt="">
     </div>
     <h1>Atangana Bread</h1>
     <p class="sous-titre">Coop. Manioc Mbalmayo</p>
@@ -895,84 +895,6 @@ async function chargerLivraisonsGlobales() {
 // ==========================================
 
 let carteGlobale = null;
-
-// ==========================================
-//   PARAMÈTRES - CHANGER CODE ADMIN
-// ==========================================
-
-function ouvrirParametres() {
-  afficherEcran('parametres');
-  document.getElementById('pwd-actuel').value = '';
-  document.getElementById('pwd-nouveau').value = '';
-  document.getElementById('pwd-confirme').value = '';
-  document.getElementById('param-erreur').textContent = '';
-  document.getElementById('param-succes').textContent = '';
-}
-
-async function changerCodeAdmin() {
-  const actuel = document.getElementById('pwd-actuel').value;
-  const nouveau = document.getElementById('pwd-nouveau').value;
-  const confirme = document.getElementById('pwd-confirme').value;
-  const erreur = document.getElementById('param-erreur');
-  const succes = document.getElementById('param-succes');
-  
-  erreur.textContent = '';
-  succes.textContent = '';
-  
-  if (!actuel || !nouveau || !confirme) {
-    erreur.textContent = '❌ Tous les champs sont obligatoires';
-    return;
-  }
-  
-  if (nouveau.length < 6) {
-    erreur.textContent = '❌ Le nouveau code doit faire au moins 6 caractères';
-    return;
-  }
-  
-  if (nouveau !== confirme) {
-    erreur.textContent = '❌ Les 2 codes ne correspondent pas';
-    return;
-  }
-  
-  if (nouveau === actuel) {
-    erreur.textContent = '❌ Le nouveau code est identique à l\'ancien';
-    return;
-  }
-  
-  try {
-    const docRef = await db.collection('parametres').doc('admin').get();
-    let codeActuel = 'makanda2026';
-    
-    if (docRef.exists && docRef.data().codeAdmin) {
-      codeActuel = docRef.data().codeAdmin;
-    }
-    
-    if (actuel !== codeActuel) {
-      erreur.textContent = '❌ Code actuel incorrect';
-      return;
-    }
-    
-    await db.collection('parametres').doc('admin').set({
-      codeAdmin: nouveau,
-      dateModification: new Date().toISOString()
-    }, { merge: true });
-    
-    succes.textContent = '✅ Code changé avec succès !';
-    document.getElementById('pwd-actuel').value = '';
-    document.getElementById('pwd-nouveau').value = '';
-    document.getElementById('pwd-confirme').value = '';
-    
-    console.log('✅ Code admin changé');
-    
-    setTimeout(() => {
-      afficherEcran('admin');
-    }, 2000);
-    
-  } catch (err) {
-    console.error(err);
-    erreur.textContent = '⚠️ Erreur : ' + err.message;
-  }
-}
 
 function ouvrirCarteRevendeurs() {
   afficherEcran('carte');
