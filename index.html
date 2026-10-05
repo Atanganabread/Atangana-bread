@@ -10,7 +10,22 @@
 </head>
 <body>
 
-  <div id="ecran-connexion" class="ecran actif">
+  <div id="ecran-code-app" class="ecran actif">
+    <div class="logo">
+      <img src="https://i.ibb.co/jZr2JGGQ/bobolo.jpg" alt="">
+    </div>
+    <h1>Atangana Bread</h1>
+    <p class="sous-titre">Coop. Manioc Mbalmayo</p>
+    <div class="formulaire" style="max-width:340px; margin:20px auto;">
+      <h3>🔐 Code d'accès</h3>
+      <p style="color:#666; font-size:13px; margin-bottom:15px;">Entrez le code fourni par la coopérative</p>
+      <input type="password" id="app-code" placeholder="••••••••" autocomplete="off">
+      <button class="btn-save" onclick="verifierCodeApp()">🔓 Accéder</button>
+      <p id="app-code-erreur" style="color:#F44336; text-align:center; font-weight:600; margin-top:10px;"></p>
+    </div>
+  </div>
+
+  <div id="ecran-connexion" class="ecran">
     <div class="logo">
       <img src="https://i.ibb.co/jZr2JGGQ/bobolo.jpg" alt="">
     </div>
@@ -89,7 +104,7 @@
     <div class="contenu">
       <div class="filtre-livreur">
         <label>Date :</label>
-        <input type="date" id="livreur-date">
+        <input type="date" id="livreur-date">no
         <button class="btn-principal" onclick="chargerLivraisonsLivreur()">🔄 Actualiser</button>
       </div>
       <p id="info-livreur" style="margin-top:15px;"></p>
@@ -166,216 +181,229 @@
       </div>
     </div>
   </div>
-
   <div id="ecran-login-revendeur" class="ecran">
-    <header class="entete">
-      <button class="btn-retour" onclick="afficherEcran('connexion')">⬅️</button>
-      <h2>🏪 Espace Revendeur</h2>
-      <span style="width:40px"></span>
-    </header>
-    <div class="contenu">
-      <div class="formulaire" style="margin-top:20px;">
-        <h3>🔐 Connexion</h3>
-        <label>Sélectionnez votre nom</label>
-        <select id="login-rev-nom">
-          <option value="">— Choisir —</option>
-        </select>
-        <label>Votre téléphone</label>
-        <input type="tel" id="login-rev-tel" placeholder="Ex: 6XX XX XX XX">
-        <button class="btn-save" onclick="connecterRevendeur()">🔓 Se connecter</button>
-      </div>
-      <p id="login-rev-erreur" style="color:#F44336; text-align:center; font-weight:600;"></p>
+  <header class="entete">
+    <button class="btn-retour" onclick="afficherEcran('connexion')">⬅️</button>
+    <h2>🏪 Espace Revendeur</h2>
+    <span style="width:40px"></span>
+  </header>
+  <div class="contenu">
+    <div class="formulaire" style="margin-top:20px;">
+      <h3>🔐 Connexion</h3>
+      <label>Sélectionnez votre nom</label>
+      <select id="login-rev-nom">
+        <option value="">— Choisir —</option>
+      </select>
+      <label>Votre téléphone</label>
+      <input type="tel" id="login-rev-tel" placeholder="Ex: 6XX XX XX XX">
+      <button class="btn-save" onclick="connecterRevendeur()">🔓 Se connecter</button>
     </div>
+    <p id="login-rev-erreur" style="color:#F44336; text-align:center; font-weight:600;"></p>
   </div>
+</div>
 
-  <div id="ecran-revendeur" class="ecran">
-    <header class="entete">
-      <h2 id="titre-revendeur-connecte">🏪 Mon espace</h2>
-      <button class="btn-deco" onclick="deconnecterRevendeur()">🚪</button>
-    </header>
-    <div class="contenu">
-      <div style="background:#FFF3E0; padding:15px; border-radius:12px; margin-bottom:20px; border-left:4px solid #F57C00;">
-        <strong id="rev-info-nom" style="color:#F57C00;">—</strong><br>
-        <span style="color:#666; font-size:14px;">📞 <span id="rev-info-tel">—</span></span>
-      </div>
+<div id="ecran-revendeur" class="ecran">
+  <header class="entete">
+    <h2 id="titre-revendeur-connecte">🏪 Mon espace</h2>
+    <button class="btn-deco" onclick="deconnecterRevendeur()">🚪</button>
+  </header>
+  <div class="contenu">
+    <div style="background:#FFF3E0; padding:15px; border-radius:12px; margin-bottom:20px; border-left:4px solid #F57C00;">
+      <strong id="rev-info-nom" style="color:#F57C00;">—</strong><br>
+      <span style="color:#666; font-size:14px;">📞 <span id="rev-info-tel">—</span></span>
+    </div>
 
-      <div style="background:#FFF3E0; padding:15px; border-radius:12px; margin-bottom:20px; border-left:4px solid #F57C00;">
-        <strong style="color:#F57C00; font-size:14px;">📞 Contact en cas de souci</strong>
-        <div style="margin-top:12px; padding-bottom:12px; border-bottom:1px solid #f0f0f0;">
-          <div style="font-size:15px; color:#333; margin-bottom:8px;">📱 <strong>676 07 30 09</strong></div>
-          <div style="display:flex; gap:8px;">
-            <a href="tel:676073009" style="flex:1; text-align:center; padding:10px; background:#4CAF50; color:white; text-decoration:none; border-radius:8px; font-weight:600; font-size:14px;">📞 Appeler</a>
-            <a href="https://wa.me/237676073009" target="_blank" style="flex:1; text-align:center; padding:10px; background:#25D366; color:white; text-decoration:none; border-radius:8px; font-weight:600; font-size:14px;">💬 WhatsApp</a>
-          </div>
-        </div>
-        <div style="margin-top:12px;">
-          <div style="font-size:15px; color:#333; margin-bottom:8px;">📱 <strong>693 18 06 08</strong></div>
-          <div style="display:flex; gap:8px;">
-            <a href="tel:693180608" style="flex:1; text-align:center; padding:10px; background:#4CAF50; color:white; text-decoration:none; border-radius:8px; font-weight:600; font-size:14px;">📞 Appeler</a>
-            <a href="https://wa.me/237693180608" target="_blank" style="flex:1; text-align:center; padding:10px; background:#25D366; color:white; text-decoration:none; border-radius:8px; font-weight:600; font-size:14px;">💬 WhatsApp</a>
-          </div>
+    <div style="background:#FFF3E0; padding:15px; border-radius:12px; margin-bottom:20px; border-left:4px solid #F57C00;">
+      <strong style="color:#F57C00; font-size:14px;">📞 Contact en cas de souci</strong>
+      <div style="margin-top:12px; padding-bottom:12px; border-bottom:1px solid #f0f0f0;">
+        <div style="font-size:15px; color:#333; margin-bottom:8px;">📱 <strong>676 07 30 09</strong></div>
+        <div style="display:flex; gap:8px;">
+          <a href="tel:+237676073009" style="flex:1; text-align:center; padding:10px; background:#4CAF50; color:white; text-decoration:none; border-radius:8px; font-weight:600; font-size:14px;">📞 Appeler</a>
+          <a href="https://wa.me/237676073009" target="_blank" style="flex:1; text-align:center; padding:10px; background:#25D366; color:white; text-decoration:none; border-radius:8px; font-weight:600; font-size:14px;">💬 WhatsApp</a>
         </div>
       </div>
-
-      <button class="btn-principal" onclick="ouvrirNouvelleCommandeRevendeur()">➕ Nouvelle commande</button>
-
-      <div id="form-commande-revendeur" class="formulaire" style="display:none;">
-        <h3>📦 Nouvelle commande</h3>
-        <p style="color:#F57C00; margin-bottom:15px; font-weight:600;">💰 Prix : 125 FCFA/bâton</p>
-        <label>Quantité (nombre de bâtons)</label>
-        <input type="number" id="rev-cmd-quantite" placeholder="Ex: 50" min="1" oninput="calculerTotalRevendeur()">
-        <div style="background:#FFF3E0; padding:15px; border-radius:10px; margin-top:15px; border-left:4px solid #F57C00;">
-          <span style="font-size:14px; color:#666;">💰 TOTAL :</span>
-          <strong id="rev-cmd-total" style="font-size:20px; color:#F57C00; margin-left:8px;">0 FCFA</strong>
+      <div style="margin-top:12px;">
+        <div style="font-size:15px; color:#333; margin-bottom:8px;">📱 <strong>693 18 06 08</strong></div>
+        <div style="display:flex; gap:8px;">
+          <a href="tel:+237693180608" style="flex:1; text-align:center; padding:10px; background:#4CAF50; color:white; text-decoration:none; border-radius:8px; font-weight:600; font-size:14px;">📞 Appeler</a>
+          <a href="https://wa.me/237693180608" target="_blank" style="flex:1; text-align:center; padding:10px; background:#25D366; color:white; text-decoration:none; border-radius:8px; font-weight:600; font-size:14px;">💬 WhatsApp</a>
         </div>
-        <label style="margin-top:15px;">Date de livraison</label>
-        <input type="date" id="rev-cmd-date">
-        <button class="btn-save" onclick="enregistrerCommandeRevendeur()">💾 Envoyer la commande</button>
-        <button class="btn-annuler" onclick="fermerCommandeRevendeur()">Annuler</button>
-      </div>
-
-      <h3 style="margin-top:30px;">📋 Mes commandes</h3>
-      <div id="liste-commandes-revendeur">
-        <p style="color:#999;">Aucune commande pour l'instant.</p>
       </div>
     </div>
-  </div>
 
-  <div id="ecran-commandes" class="ecran">
-    <header class="entete">
-      <button class="btn-retour" onclick="afficherEcran('admin')">⬅️</button>
-      <h2>📦 Commandes</h2>
-      <span style="width:40px"></span>
+    <button class="btn-principal" onclick="ouvrirNouvelleCommandeRevendeur()">➕ Nouvelle commande</button>
+
+    <div id="form-commande-revendeur" class="formulaire" style="display:none;">
+      <h3>📦 Nouvelle commande</h3>
+      <p style="color:#F57C00; margin-bottom:15px; font-weight:600;">💰 Prix : 125 FCFA/bâton</p>
+      <label>Quantité (nombre de bâtons)</label>
+      <input type="number" id="rev-cmd-quantite" placeholder="Ex: 50" min="1" oninput="calculerTotalRevendeur()">
+      <div style="background:#FFF3E0; padding:15px; border-radius:10px; margin-top:15px; border-left:4px solid #F57C00;">
+        <span style="font-size:14px; color:#666;">💰 TOTAL :</span>
+        <strong id="rev-cmd-total" style="font-size:20px; color:#F57C00; margin-left:8px;">0 FCFA</strong>
+      </div>
+      <label style="margin-top:15px;">Date de livraison</label>
+      <input type="date" id="rev-cmd-date">
+      <button class="btn-save" onclick="enregistrerCommandeRevendeur()">💾 Envoyer la commande</button>
+      <button class="btn-annuler" onclick="fermerCommandeRevendeur()">Annuler</button>
+    </div>
+
+    <h3 style="margin-top:30px;">📋 Mes commandes</h3>
+    <div id="liste-commandes-revendeur">
+      <p style="color:#999;">Aucune commande pour l'instant.</p>
+    </div>
+  </div>
+</div>
+
+<div id="ecran-commandes" class="ecran">
+  <header class="entete">
+    <button class="btn-retour" onclick="afficherEcran('admin')">⬅️</button>
+    <h2>📦 Commandes</h2>
+    <span style="width:40px"></span>
+  </header>
+  <div class="contenu">
+    <div class="filtre-livreur">
+      <label>Date :</label>
+      <input type="date" id="commandes-date">
+      <button class="btn-principal" onclick="chargerCommandesGlobales()">🔄 Actualiser</button>
+    </div>
+    <div id="commandes-stats" style="background:#FFF3E0; padding:15px; border-radius:12px; margin:15px 0; border-left:4px solid #F57C00; font-weight:600; color:#F57C00;">⏳ Chargement...</div>
+    <h3 style="margin-top:20px;">📋 Détail des commandes</h3>
+    <div id="liste-commandes-globales">
+      <p style="color:#999;">Sélectionnez une date et actualisez.</p>
+    </div>
+  </div>
+</div>
+
+<div id="ecran-livraisons" class="ecran">
+  <header class="entete">
+    <button class="btn-retour" onclick="afficherEcran('admin')">⬅️</button>
+    <h2>✅ Livraisons</h2>
+    <span style="width:40px"></span>
+  </header>
+  <div class="contenu">
+    <div class="filtre-livreur">
+      <label>Date :</label>
+      <input type="date" id="livraisons-date">
+      <button class="btn-principal" onclick="chargerLivraisonsGlobales()">🔄 Actualiser</button>
+    </div>
+    <div id="livraisons-stats" style="background:#FFF3E0; padding:15px; border-radius:12px; margin:15px 0; border-left:4px solid #F57C00; font-weight:600; color:#F57C00;">⏳ Chargement...</div>
+    <h3 style="margin-top:20px;">🚚 Par livreur</h3>
+    <div id="stats-par-livreur">
+      <p style="color:#999;">Chargement...</p>
+    </div>
+    <h3 style="margin-top:25px;">📋 Détail des livraisons</h3>
+    <div id="liste-livraisons-globales">
+      <p style="color:#999;">Sélectionnez une date et actualisez.</p>
+    </div>
+  </div>
+</div>
+
+<div id="ecran-carte" class="ecran">
+  <header class="entete">
+    <button class="btn-retour" onclick="afficherEcran('admin')">⬅️</button>
+    <h2>🗺️ Carte des revendeurs</h2>
+    <span style="width:40px"></span>
+  </header>
+  <div class="contenu">
+    <div id="carte-info" style="background:#FFF3E0; padding:15px; border-radius:12px; margin-bottom:15px; border-left:4px solid #F57C00; font-weight:600; color:#F57C00;">⏳ Chargement...</div>
+    <div id="carte" style="height:500px; border-radius:12px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.1);"></div>
+    <h3 style="margin-top:20px;">📍 Revendeurs géolocalisés</h3>
+    <div id="liste-revendeurs-carte">
+      <p style="color:#999;">Chargement...</p>
+    </div>
+  </div>
+</div>
+
+<div id="ecran-livreurs" class="ecran">
+  <header class="entete">
+    <button class="btn-retour" onclick="afficherEcran('admin')">⬅️</button>
+    <h2>🚚 Mes livreurs</h2>
+    <span style="width:40px"></span>
+  </header>
+  <div class="contenu">
+    <button class="btn-principal" onclick="ouvrirFormulaireLivreur()">➕ Ajouter un livreur</button>
+    <div id="form-livreur" class="formulaire" style="display:none;">
+      <h3 id="form-livreur-titre">Nouveau livreur</h3>
+      <label>Nom complet</label>
+      <input type="text" id="liv-nom" placeholder="Ex: Jean Mbarga">
+      <label>Téléphone</label>
+      <input type="tel" id="liv-tel" placeholder="Ex: 6XX XX XX XX">
+      <label>Code PIN (4 chiffres)</label>
+      <input type="tel" id="liv-pin" placeholder="Ex: 1234" maxlength="4">
+      <label>Secteur</label>
+      <input type="text" id="liv-secteur" placeholder="Ex: Bonabéri Nord">
+      <label>Statut</label>
+      <select id="liv-statut">
+        <option value="actif">✅ Actif</option>
+        <option value="pause">⏸️ En pause</option>
+        <option value="parti">🚫 Parti</option>
+      </select>
+      <button class="btn-save" onclick="enregistrerLivreur()">💾 Enregistrer</button>
+      <button class="btn-annuler" onclick="fermerFormulaireLivreur()">Annuler</button>
+    </div>
+    <h3 style="margin-top:30px;">📋 Liste des livreurs</h3>
+    <div id="liste-livreurs">
+      <p style="color:#999;">Aucun livreur pour l'instant.</p>
+    </div>
+  </div>
+</div>
+
+<div id="ecran-parametres" class="ecran">
+  <header class="entete">
+    <button class="btn-retour" onclick="afficherEcran('admin')">⬅️</button>
+    <h2>⚙️ Paramètres</h2>
+    <span style="width:40px"></span>
+  </header>
+  <div class="contenu">
+    <div class="formulaire">
+      <h3>🔐 Changer le code administrateur</h3>
+      <p style="color:#666; font-size:14px; margin-bottom:15px;">Le code actuel protège votre accès admin.</p>
+      <label>Code actuel</label>
+      <input type="password" id="pwd-actuel" placeholder="••••••••" autocomplete="off">
+      <label>Nouveau code</label>
+      <input type="password" id="pwd-nouveau" placeholder="••••••••" autocomplete="off">
+      <label>Confirmer le nouveau code</label>
+      <input type="password" id="pwd-confirme" placeholder="••••••••" autocomplete="off">
+      <button class="btn-save" onclick="changerCodeAdmin()">💾 Enregistrer le nouveau code</button>
+    </div>
+    <p id="param-erreur" style="color:#F44336; text-align:center; font-weight:600; margin-top:15px;"></p>
+    <p id="param-succes" style="color:#4CAF50; text-align:center; font-weight:600; margin-top:15px;"></p>
+
+    <div class="formulaire" style="margin-top:30px;">
+      <h3>🔑 Changer le code d'accès à l'application</h3>
+      <p style="color:#666; font-size:14px; margin-bottom:15px;">Ce code protège l'accès à toute l'application.</p>
+      <label>Code actuel</label>
+      <input type="password" id="pwd-app-actuel" placeholder="••••••••" autocomplete="off">
+      <label>Nouveau code</label>
+      <input type="password" id="pwd-app-nouveau" placeholder="••••••••" autocomplete="off">
+      <label>Confirmer le nouveau code</label>
+      <input type="password" id="pwd-app-confirme" placeholder="••••••••" autocomplete="off">
+      <button class="btn-save" onclick="changerCodeApp()">💾 Enregistrer le nouveau code</button>
+    </div>
+    <p id="param-app-erreur" style="color:#F44336; text-align:center; font-weight:600; margin-top:15px;"></p>
+    <p id="param-app-succes" style="color:#4CAF50; text-align:center; font-weight:600; margin-top:15px;"></p>
+  </div>
+</div>
+
+<div id="modal-historique" class="modal">
+  <div class="modal-contenu">
+    <header class="modal-entete">
+      <h2 id="modal-titre">📊 Historique</h2>
+      <button class="btn-fermer" onclick="fermerHistorique()">✕</button>
     </header>
-    <div class="contenu">
-      <div class="filtre-livreur">
-        <label>Date :</label>
-        <input type="date" id="commandes-date">
-        <button class="btn-principal" onclick="chargerCommandesGlobales()">🔄 Actualiser</button>
-      </div>
-      <div id="commandes-stats" style="background:#FFF3E0; padding:15px; border-radius:12px; margin:15px 0; border-left:4px solid #F57C00; font-weight:600; color:#F57C00;">⏳ Chargement...</div>
-      <h3 style="margin-top:20px;">📋 Détail des commandes</h3>
-      <div id="liste-commandes-globales">
-        <p style="color:#999;">Sélectionnez une date et actualisez.</p>
-      </div>
+    <div id="modal-corps" class="modal-corps">
+      <p>Chargement...</p>
     </div>
   </div>
+</div>
 
-  <div id="ecran-livraisons" class="ecran">
-    <header class="entete">
-      <button class="btn-retour" onclick="afficherEcran('admin')">⬅️</button>
-      <h2>✅ Livraisons</h2>
-      <span style="width:40px"></span>
-    </header>
-    <div class="contenu">
-      <div class="filtre-livreur">
-        <label>Date :</label>
-        <input type="date" id="livraisons-date">
-        <button class="btn-principal" onclick="chargerLivraisonsGlobales()">🔄 Actualiser</button>
-      </div>
-      <div id="livraisons-stats" style="background:#FFF3E0; padding:15px; border-radius:12px; margin:15px 0; border-left:4px solid #F57C00; font-weight:600; color:#F57C00;">⏳ Chargement...</div>
-      <h3 style="margin-top:20px;">🚚 Par livreur</h3>
-      <div id="stats-par-livreur">
-        <p style="color:#999;">Chargement...</p>
-      </div>
-      <h3 style="margin-top:25px;">📋 Détail des livraisons</h3>
-      <div id="liste-livraisons-globales">
-        <p style="color:#999;">Sélectionnez une date et actualisez.</p>
-      </div>
-    </div>
-  </div>
+<audio id="son-notification" preload="auto">
+  <source src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" type="audio/ogg">
+</audio>
 
-  <div id="ecran-carte" class="ecran">
-    <header class="entete">
-      <button class="btn-retour" onclick="afficherEcran('admin')">⬅️</button>
-      <h2>🗺️ Carte des revendeurs</h2>
-      <span style="width:40px"></span>
-    </header>
-    <div class="contenu">
-      <div id="carte-info" style="background:#FFF3E0; padding:15px; border-radius:12px; margin-bottom:15px; border-left:4px solid #F57C00; font-weight:600; color:#F57C00;">⏳ Chargement...</div>
-      <div id="carte" style="height:500px; border-radius:12px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.1);"></div>
-      <h3 style="margin-top:20px;">📍 Revendeurs géolocalisés</h3>
-      <div id="liste-revendeurs-carte">
-        <p style="color:#999;">Chargement...</p>
-      </div>
-    </div>
-  </div>
-
-  <div id="ecran-livreurs" class="ecran">
-    <header class="entete">
-      <button class="btn-retour" onclick="afficherEcran('admin')">⬅️</button>
-      <h2>🚚 Mes livreurs</h2>
-      <span style="width:40px"></span>
-    </header>
-    <div class="contenu">
-      <button class="btn-principal" onclick="ouvrirFormulaireLivreur()">➕ Ajouter un livreur</button>
-      <div id="form-livreur" class="formulaire" style="display:none;">
-        <h3 id="form-livreur-titre">Nouveau livreur</h3>
-        <label>Nom complet</label>
-        <input type="text" id="liv-nom" placeholder="Ex: Jean Mbarga">
-        <label>Téléphone</label>
-        <input type="tel" id="liv-tel" placeholder="Ex: 6XX XX XX XX">
-        <label>Code PIN (4 chiffres)</label>
-        <input type="tel" id="liv-pin" placeholder="Ex: 1234" maxlength="4">
-        <label>Secteur</label>
-        <input type="text" id="liv-secteur" placeholder="Ex: Bonabéri Nord">
-        <label>Statut</label>
-        <select id="liv-statut">
-          <option value="actif">✅ Actif</option>
-          <option value="pause">⏸️ En pause</option>
-          <option value="parti">🚫 Parti</option>
-        </select>
-        <button class="btn-save" onclick="enregistrerLivreur()">💾 Enregistrer</button>
-        <button class="btn-annuler" onclick="fermerFormulaireLivreur()">Annuler</button>
-      </div>
-      <h3 style="margin-top:30px;">📋 Liste des livreurs</h3>
-      <div id="liste-livreurs">
-        <p style="color:#999;">Aucun livreur pour l'instant.</p>
-      </div>
-    </div>
-  </div>
-
-  <div id="ecran-parametres" class="ecran">
-    <header class="entete">
-      <button class="btn-retour" onclick="afficherEcran('admin')">⬅️</button>
-      <h2>⚙️ Paramètres</h2>
-      <span style="width:40px"></span>
-    </header>
-    <div class="contenu">
-      <div class="formulaire">
-        <h3>🔐 Changer le code administrateur</h3>
-        <p style="color:#666; font-size:14px; margin-bottom:15px;">Le code actuel protège votre accès admin.</p>
-        <label>Code actuel</label>
-        <input type="password" id="pwd-actuel" placeholder="••••••••" autocomplete="off">
-        <label>Nouveau code</label>
-        <input type="password" id="pwd-nouveau" placeholder="••••••••" autocomplete="off">
-        <label>Confirmer le nouveau code</label>
-        <input type="password" id="pwd-confirme" placeholder="••••••••" autocomplete="off">
-        <button class="btn-save" onclick="changerCodeAdmin()">💾 Enregistrer le nouveau code</button>
-      </div>
-      <p id="param-erreur" style="color:#F44336; text-align:center; font-weight:600; margin-top:15px;"></p>
-      <p id="param-succes" style="color:#4CAF50; text-align:center; font-weight:600; margin-top:15px;"></p>
-    </div>
-  </div>
-
-  <div id="modal-historique" class="modal">
-    <div class="modal-contenu">
-      <header class="modal-entete">
-        <h2 id="modal-titre">📊 Historique</h2>
-        <button class="btn-fermer" onclick="fermerHistorique()">✕</button>
-      </header>
-      <div id="modal-corps" class="modal-corps">
-        <p>Chargement...</p>
-      </div>
-    </div>
-  </div>
-
-  <audio id="son-notification" preload="auto">
-    <source src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" type="audio/ogg">
-  </audio>
-
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyCJSlGP25Gon9ggHF5e1uW6ISQYJ98otyE",
@@ -390,6 +418,7 @@
     console.log("✅ Firebase connecté !");
 
     const PRIX_BATON = 125;
+    const CODE_APP_DEFAUT = 'atangana2026';
     let gpsActuel = null;
     let pageActuelle = 1;
     const itemsParPage = 10;
@@ -408,6 +437,43 @@
       if (ecran) ecran.classList.add('actif');
     }
 
+    // ===== PROTECTION GLOBALE =====
+    async function verifierCodeApp() {
+      const codeSaisi = document.getElementById('app-code').value;
+      const erreur = document.getElementById('app-code-erreur');
+      erreur.textContent = '';
+      if (!codeSaisi) { erreur.textContent = '❌ Entrez le code'; return; }
+      try {
+        const docRef = await db.collection('parametres').doc('app').get();
+        let codeAttendu = CODE_APP_DEFAUT;
+        if (docRef.exists && docRef.data().codeApp) {
+          codeAttendu = docRef.data().codeApp;
+        } else {
+          await db.collection('parametres').doc('app').set({ codeApp: CODE_APP_DEFAUT, dateCreation: new Date().toISOString() });
+        }
+        if (codeSaisi !== codeAttendu) {
+          erreur.textContent = '❌ Code incorrect';
+          document.getElementById('app-code').value = '';
+          return;
+        }
+        localStorage.setItem('appDebloquee', 'oui');
+        document.getElementById('app-code').value = '';
+        afficherEcran('connexion');
+      } catch (err) {
+        console.error(err);
+        erreur.textContent = '⚠️ Erreur : ' + err.message;
+      }
+    }
+
+    function verifierAccesApp() {
+      if (localStorage.getItem('appDebloquee') === 'oui') {
+        afficherEcran('connexion');
+      } else {
+        afficherEcran('code-app');
+      }
+    }
+
+    // ===== LOGIN ADMIN =====
     async function connecterAdmin() {
       const codeSaisi = document.getElementById('login-admin-code').value;
       const erreur = document.getElementById('login-admin-erreur');
@@ -521,6 +587,7 @@
       const demain = new Date();
       demain.setDate(demain.getDate() + 1);
       document.getElementById('rev-cmd-date').value = demain.toISOString().split('T')[0];
+      document.getElementById('form-commande-revendeur').scrollIntoView({ behavior: 'smooth' });
     }
 
     function fermerCommandeRevendeur() { document.getElementById('form-commande-revendeur').style.display = 'none'; }
@@ -564,6 +631,7 @@
       } catch (err) { console.error(err); alert('❌ Erreur : ' + err.message); }
     }
 
+    // ===== LOGIN LIVREUR =====
     async function chargerLivreursDansLogin() {
       try {
         const snap = await db.collection('livreurs').get();
@@ -621,6 +689,7 @@
       } catch (err) { console.error(err); info.textContent = "⚠️ Erreur"; }
     }
 
+    // ===== REVENDEURS =====
     function pagePrecedente() { if (pageActuelle > 1) { pageActuelle--; chargerListeRevendeurs(); } }
     function pageSuivante() { pageActuelle++; chargerListeRevendeurs(); }
 
@@ -690,6 +759,7 @@
       document.getElementById('form-revendeur').style.display = 'block';
       document.getElementById('form-commande').style.display = 'none';
       chargerLivreursDansSelect();
+      document.getElementById('form-revendeur').scrollIntoView({ behavior: 'smooth' });
     }
 
     function fermerFormulaire() {
@@ -760,8 +830,16 @@
           compteur++;
           if (compteur <= debutPage) return;
           if (compteur > debutPage + itemsParPage) return;
-          const telNettoye = (r.telephone || '').replace(/[^0-9+]/g, '');
-          const boutonAppel = r.telephone ? `<a href="tel:${telNettoye}" style="display:block; margin-top:8px; padding:12px; background:#2196F3; color:white; text-decoration:none; text-align:center; border-radius:10px; font-weight:600; font-size:14px;">📞 Appeler ${r.telephone}</a>` : '';
+    // Nettoyer et formater le numéro pour l'appel
+let telNettoye = (r.telephone || '').replace(/[^0-9+]/g, '');
+if (/^[62]\d{8}$/.test(telNettoye)) {
+  telNettoye = '+237' + telNettoye;
+} else if (telNettoye.startsWith('00237')) {
+  telNettoye = '+' + telNettoye.slice(2);
+} else if (telNettoye && !telNettoye.startsWith('+')) {
+  telNettoye = '+237' + telNettoye;
+}
+const boutonAppel = r.telephone ? `<a href="tel:${telNettoye}" style="display:block; margin-top:8px; padding:12px; background:#2196F3; color:white; text-decoration:none; text-align:center; border-radius:10px; font-weight:600; font-size:14px;">📞 Appeler ${r.telephone}</a>` : '';
           html += `<div class="carte-revendeur"><strong>👤 ${r.nom}</strong><br>📞 ${r.telephone || 'Non renseigné'}<br>🏘️ ${r.quartier || 'Non renseigné'}<br>🚚 ${r.livreurNom || 'Admin'}<br>💰 ${PRIX_BATON} FCFA/bâton<div class="actions-revendeur"><button class="btn-commande" onclick="ouvrirCommande('${doc.id}', '${r.nom.replace(/'/g, "\\'")}')">📦 Commander</button><button class="btn-historique" onclick="voirHistorique('${doc.id}', '${r.nom.replace(/'/g, "\\'")}')">📊 Historique</button></div>${boutonAppel}</div>`;
         });
         liste.innerHTML = html;
@@ -788,6 +866,7 @@
       document.getElementById('cmd-date').value = demain.toISOString().split('T')[0];
       document.getElementById('form-revendeur').style.display = 'none';
       document.getElementById('form-commande').style.display = 'block';
+      document.getElementById('form-commande').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function calculerTotalCommande() {
@@ -904,6 +983,7 @@
       } catch (err) { console.error(err); alert('❌ Erreur'); }
     }
 
+    // ===== LIVREURS =====
     function ouvrirLivreurs() { afficherEcran('livreurs'); chargerListeLivreurs(); }
 
     function ouvrirFormulaireLivreur() {
@@ -961,6 +1041,7 @@
       } catch (err) { console.error(err); }
     }
 
+    // ===== COMMANDES GLOBALES =====
     function ouvrirCommandesGlobales() {
       afficherEcran('commandes');
       const dateInput = document.getElementById('commandes-date');
@@ -1001,6 +1082,7 @@
       } catch (err) { console.error(err); stats.innerHTML = '⚠️ Erreur'; }
     }
 
+    // ===== LIVRAISONS GLOBALES =====
     function ouvrirLivraisonsGlobales() {
       afficherEcran('livraisons');
       const dateInput = document.getElementById('livraisons-date');
@@ -1055,6 +1137,7 @@
       } catch (err) { console.error(err); stats.innerHTML = '⚠️ Erreur'; }
     }
 
+    // ===== CARTE =====
     function ouvrirCarteRevendeurs() { afficherEcran('carte'); chargerCarteRevendeurs(); }
 
     async function chargerCarteRevendeurs() {
@@ -1094,6 +1177,7 @@
       } catch (err) { console.error(err); info.innerHTML = '⚠️ Erreur'; }
     }
 
+    // ===== PARAMÈTRES =====
     function ouvrirParametres() {
       afficherEcran('parametres');
       document.getElementById('pwd-actuel').value = '';
@@ -1101,6 +1185,11 @@
       document.getElementById('pwd-confirme').value = '';
       document.getElementById('param-erreur').textContent = '';
       document.getElementById('param-succes').textContent = '';
+      document.getElementById('pwd-app-actuel').value = '';
+      document.getElementById('pwd-app-nouveau').value = '';
+      document.getElementById('pwd-app-confirme').value = '';
+      document.getElementById('param-app-erreur').textContent = '';
+      document.getElementById('param-app-succes').textContent = '';
     }
 
     async function changerCodeAdmin() {
@@ -1112,23 +1201,46 @@
       erreur.textContent = '';
       succes.textContent = '';
       if (!actuel || !nouveau || !confirme) { erreur.textContent = '❌ Tous les champs sont obligatoires'; return; }
-      if (nouveau.length < 6) { erreur.textContent = '❌ Le nouveau code doit faire au moins 6 caractères'; return; }
-      if (nouveau !== confirme) { erreur.textContent = '❌ Les 2 codes ne correspondent pas'; return; }
-      if (nouveau === actuel) { erreur.textContent = '❌ Identique à l\'ancien'; return; }
+      if (nouveau.length < 6) { erreur.textContent = '❌ Au moins 6 caractères'; return; }
+      if (nouveau !== confirme) { erreur.textContent = '❌ Les codes ne correspondent pas'; return; }
       try {
         const docRef = await db.collection('parametres').doc('admin').get();
         let codeActuel = 'makanda2026';
         if (docRef.exists && docRef.data().codeAdmin) codeActuel = docRef.data().codeAdmin;
         if (actuel !== codeActuel) { erreur.textContent = '❌ Code actuel incorrect'; return; }
         await db.collection('parametres').doc('admin').set({ codeAdmin: nouveau, dateModification: new Date().toISOString() }, { merge: true });
-        succes.textContent = '✅ Code changé avec succès !';
+        succes.textContent = '✅ Code admin changé !';
         document.getElementById('pwd-actuel').value = '';
         document.getElementById('pwd-nouveau').value = '';
         document.getElementById('pwd-confirme').value = '';
-        setTimeout(() => { afficherEcran('admin'); }, 2000);
+      } catch (err) { console.error(err); erreur.textContent = '⚠️Erreur'; }
+    }
+
+    async function changerCodeApp() {
+      const actuel = document.getElementById('pwd-app-actuel').value;
+      const nouveau = document.getElementById('pwd-app-nouveau').value;
+      const confirme = document.getElementById('pwd-app-confirme').value;
+      const erreur = document.getElementById('param-app-erreur');
+      const succes = document.getElementById('param-app-succes');
+      erreur.textContent = '';
+      succes.textContent = '';
+      if (!actuel || !nouveau || !confirme) { erreur.textContent = '❌ Tous les champs sont obligatoires'; return; }
+      if (nouveau.length < 6) { erreur.textContent = '❌ Au moins 6 caractères'; return; }
+      if (nouveau !== confirme) { erreur.textContent = '❌ Les codes ne correspondent pas'; return; }
+      try {
+        const docRef = await db.collection('parametres').doc('app').get();
+        let codeActuel = CODE_APP_DEFAUT;
+        if (docRef.exists && docRef.data().codeApp) codeActuel = docRef.data().codeApp;
+        if (actuel !== codeActuel) { erreur.textContent = '❌ Code actuel incorrect'; return; }
+        await db.collection('parametres').doc('app').set({ codeApp: nouveau, dateModification: new Date().toISOString() }, { merge: true });
+        succes.textContent = '✅ Code d\'accès changé !';
+        document.getElementById('pwd-app-actuel').value = '';
+        document.getElementById('pwd-app-nouveau').value = '';
+        document.getElementById('pwd-app-confirme').value = '';
       } catch (err) { console.error(err); erreur.textContent = '⚠️ Erreur'; }
     }
 
+    // ===== NOTIFICATIONS =====
     function jouerSon() {
       try {
         const audio = document.getElementById('son-notification');
@@ -1165,9 +1277,11 @@
     }
 
     window.addEventListener('load', () => {
-      afficherEcran('connexion');
+      verifierAccesApp();
       demarrerNotifications();
     });
   </script>
 </body>
 </html>
+  
+  
