@@ -1,1287 +1,491 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Atangana Bread</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-</head>
-<body>
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-  <div id="ecran-code-app" class="ecran actif">
-    <div class="logo">
-      <img src="https://i.ibb.co/jZr2JGGQ/bobolo.jpg" alt="">
-    </div>
-    <h1>Atangana Bread</h1>
-    <p class="sous-titre">Coop. Manioc Mbalmayo</p>
-    <div class="formulaire" style="max-width:340px; margin:20px auto;">
-      <h3>🔐 Code d'accès</h3>
-      <p style="color:#666; font-size:13px; margin-bottom:15px;">Entrez le code fourni par la coopérative</p>
-      <input type="password" id="app-code" placeholder="••••••••" autocomplete="off">
-      <button class="btn-save" onclick="verifierCodeApp()">🔓 Accéder</button>
-      <p id="app-code-erreur" style="color:#F44336; text-align:center; font-weight:600; margin-top:10px;"></p>
-    </div>
-  </div>
-
-  <div id="ecran-connexion" class="ecran">
-    <div class="logo">
-      <img src="https://i.ibb.co/jZr2JGGQ/bobolo.jpg" alt="">
-    </div>
-    <h1>Atangana Bread</h1>
-    <p class="sous-titre">Coop. Manioc Mbalmayo</p>
-    <div class="choix-role">
-      <button class="btn-role" onclick="choisirRole('admin')">👑 Administrateur</button>
-      <button class="btn-role" onclick="choisirRole('livreur')">🚚 Livreur</button>
-      <button class="btn-role" onclick="choisirRole('revendeur')">🏪 Revendeur</button>
-    </div>
-  </div>
-
-  <div id="ecran-login-admin" class="ecran">
-    <header class="entete">
-      <button class="btn-retour" onclick="afficherEcran('connexion')">⬅️</button>
-      <h2>👑 Administrateur</h2>
-      <span style="width:40px"></span>
-    </header>
-    <div class="contenu">
-      <div class="formulaire" style="margin-top:20px;">
-        <h3>🔐 Accès sécurisé</h3>
-        <p style="color:#666; font-size:14px; margin-bottom:15px;">Entrez le code d'accès administrateur</p>
-        <label>Code d'accès</label>
-        <input type="password" id="login-admin-code" placeholder="••••••••" autocomplete="off">
-        <button class="btn-save" onclick="connecterAdmin()">🔓 Se connecter</button>
-      </div>
-      <p id="login-admin-erreur" style="color:#F44336; text-align:center; font-weight:600;"></p>
-    </div>
-  </div>
-
-  <div id="ecran-admin" class="ecran">
-    <header class="entete">
-      <h2>👑 Administrateur</h2>
-      <button class="btn-deco" onclick="deconnecter()">🚪</button>
-    </header>
-    <div class="contenu">
-      <h3>📊 Tableau de bord</h3>
-      <p id="info-admin">Chargement...</p>
-      <div class="grille-boutons">
-        <button class="btn-action" onclick="ouvrirRevendeurs()">👥 Revendeurs</button>
-        <button class="btn-action" onclick="ouvrirLivreurs()">🚚 Mes livreurs</button>
-        <button class="btn-action" onclick="ouvrirLivraisonsGlobales()">✅ Livraisons</button>
-        <button class="btn-action" onclick="ouvrirCommandesGlobales()">📦 Commandes</button>
-        <button class="btn-action" onclick="ouvrirCarteRevendeurs()">🗺️ Carte</button>
-        <button class="btn-action" onclick="ouvrirParametres()">⚙️ Paramètres</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="ecran-login-livreur" class="ecran">
-    <header class="entete">
-      <button class="btn-retour" onclick="afficherEcran('connexion')">⬅️</button>
-      <h2>🚚 Espace Livreur</h2>
-      <span style="width:40px"></span>
-    </header>
-    <div class="contenu">
-      <div class="formulaire" style="margin-top:20px;">
-        <h3>🔐 Connexion</h3>
-        <label>Sélectionnez votre nom</label>
-        <select id="login-livreur-nom">
-          <option value="">— Choisir —</option>
-        </select>
-        <label>Code PIN (4 chiffres)</label>
-        <input type="tel" id="login-livreur-pin" placeholder="••••" maxlength="4">
-        <button class="btn-save" onclick="connecterLivreur()">🔓 Se connecter</button>
-      </div>
-      <p id="login-livreur-erreur" style="color:#F44336; text-align:center; font-weight:600;"></p>
-    </div>
-  </div>
-
-  <div id="ecran-livreur" class="ecran">
-    <header class="entete">
-      <h2 id="titre-livreur-connecte">🚚 Mes livraisons</h2>
-      <button class="btn-deco" onclick="deconnecterLivreur()">🚪</button>
-    </header>
-    <div class="contenu">
-      <div class="filtre-livreur">
-        <label>Date :</label>
-        <input type="date" id="livreur-date">no
-        <button class="btn-principal" onclick="chargerLivraisonsLivreur()">🔄 Actualiser</button>
-      </div>
-      <p id="info-livreur" style="margin-top:15px;"></p>
-      <div id="liste-livraisons"></div>
-    </div>
-  </div>
-
-  <div id="ecran-revendeurs" class="ecran">
-    <header class="entete">
-      <button class="btn-retour" onclick="afficherEcran('admin')">⬅️</button>
-      <h2>👥 Revendeurs</h2>
-      <span style="width:40px"></span>
-    </header>
-    <div class="contenu">
-      <button class="btn-principal" onclick="ouvrirFormulaire()">➕ Ajouter un revendeur</button>
-
-      <div id="form-revendeur" class="formulaire" style="display:none;">
-        <h3>Nouveau revendeur</h3>
-        <label>Nom complet</label>
-        <input type="text" id="rev-nom" placeholder="Ex: Jean Mbarga">
-        <label>Téléphone</label>
-        <input type="tel" id="rev-tel" placeholder="Ex: 6XX XX XX XX">
-        <label>Quartier</label>
-        <input type="text" id="rev-quartier" placeholder="Ex: Bonabéri">
-        <label>Position GPS</label>
-        <div class="gps-zone">
-          <button class="btn-gps" onclick="recupererGPS()">📍 Me localiser</button>
-          <span id="rev-gps-info">Non définie</span>
-        </div>
-        <label>Livreur assigné</label>
-        <select id="rev-livreur">
-          <option value="">— Aucun (admin) —</option>
-        </select>
-        <button class="btn-save" onclick="enregistrerRevendeur()">💾 Enregistrer</button>
-        <button class="btn-annuler" onclick="fermerFormulaire()">Annuler</button>
-      </div>
-
-      <div id="form-commande" class="formulaire" style="display:none;">
-        <h3>📦 Nouvelle commande</h3>
-        <p style="color:#666; margin-bottom:5px;">Pour : <strong id="cmd-revendeur-nom"></strong></p>
-        <p style="color:#F57C00; margin-bottom:15px; font-weight:600;">💰 Prix unitaire : <span id="cmd-prix-unitaire">125</span> FCFA</p>
-        <label>Quantité (nombre de bâtons)</label>
-        <input type="number" id="cmd-quantite" placeholder="Ex: 50" min="1" oninput="calculerTotalCommande()">
-        <div style="background:#FFF3E0; padding:15px; border-radius:10px; margin-top:15px; border-left:4px solid #F57C00;">
-          <span style="font-size:14px; color:#666;">💰 TOTAL :</span>
-          <strong id="cmd-total" style="font-size:20px; color:#F57C00; margin-left:8px;">0 FCFA</strong>
-        </div>
-        <label style="margin-top:15px;">Date de livraison</label>
-        <input type="date" id="cmd-date">
-        <button class="btn-save" onclick="enregistrerCommande()">💾 Enregistrer la commande</button>
-        <button class="btn-annuler" onclick="fermerCommande()">Annuler</button>
-      </div>
-
-      <input type="text" id="recherche-revendeur" placeholder="🔍 Rechercher un revendeur..." oninput="chargerListeRevendeurs()" style="width:100%; padding:12px; font-size:15px; border:2px solid #eee; border-radius:10px; background:#fafafa; margin-bottom:15px;">
-
-      <div style="display:flex; gap:10px; margin-bottom:15px;">
-        <select id="filtre-livreur" onchange="chargerListeRevendeurs()" style="flex:1; padding:12px; font-size:14px; border:2px solid #eee; border-radius:10px; background:#fafafa;">
-          <option value="">🚚 Tous livreurs</option>
-        </select>
-        <select id="filtre-quartier" onchange="chargerListeRevendeurs()" style="flex:1; padding:12px; font-size:14px; border:2px solid #eee; border-radius:10px; background:#fafafa;">
-          <option value="">🏘️ Tous quartiers</option>
-        </select>
-      </div>
-
-      <h3 style="margin-top:30px;">📋 Liste des revendeurs</h3>
-      <div id="liste-revendeurs">
-        <p style="color:#999;">Aucun revendeur pour l'instant.</p>
-      </div>
-
-      <div id="pagination" style="display:none; justify-content:space-between; align-items:center; gap:10px; margin-top:20px; padding:15px; background:white; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
-        <button onclick="pagePrecedente()" id="btn-prev" class="btn-annuler" style="width:auto; margin:0; padding:10px 15px;">⬅️ Précédent</button>
-        <span id="pagination-info" style="font-weight:700; color:#F57C00;">Page 1/1</span>
-        <button onclick="pageSuivante()" id="btn-next" class="btn-annuler" style="width:auto; margin:0; padding:10px 15px;">Suivant ➡️</button>
-      </div>
-    </div>
-  </div>
-  <div id="ecran-login-revendeur" class="ecran">
-  <header class="entete">
-    <button class="btn-retour" onclick="afficherEcran('connexion')">⬅️</button>
-    <h2>🏪 Espace Revendeur</h2>
-    <span style="width:40px"></span>
-  </header>
-  <div class="contenu">
-    <div class="formulaire" style="margin-top:20px;">
-      <h3>🔐 Connexion</h3>
-      <label>Sélectionnez votre nom</label>
-      <select id="login-rev-nom">
-        <option value="">— Choisir —</option>
-      </select>
-      <label>Votre téléphone</label>
-      <input type="tel" id="login-rev-tel" placeholder="Ex: 6XX XX XX XX">
-      <button class="btn-save" onclick="connecterRevendeur()">🔓 Se connecter</button>
-    </div>
-    <p id="login-rev-erreur" style="color:#F44336; text-align:center; font-weight:600;"></p>
-  </div>
-</div>
-
-<div id="ecran-revendeur" class="ecran">
-  <header class="entete">
-    <h2 id="titre-revendeur-connecte">🏪 Mon espace</h2>
-    <button class="btn-deco" onclick="deconnecterRevendeur()">🚪</button>
-  </header>
-  <div class="contenu">
-    <div style="background:#FFF3E0; padding:15px; border-radius:12px; margin-bottom:20px; border-left:4px solid #F57C00;">
-      <strong id="rev-info-nom" style="color:#F57C00;">—</strong><br>
-      <span style="color:#666; font-size:14px;">📞 <span id="rev-info-tel">—</span></span>
-    </div>
-
-    <div style="background:#FFF3E0; padding:15px; border-radius:12px; margin-bottom:20px; border-left:4px solid #F57C00;">
-      <strong style="color:#F57C00; font-size:14px;">📞 Contact en cas de souci</strong>
-      <div style="margin-top:12px; padding-bottom:12px; border-bottom:1px solid #f0f0f0;">
-        <div style="font-size:15px; color:#333; margin-bottom:8px;">📱 <strong>676 07 30 09</strong></div>
-        <div style="display:flex; gap:8px;">
-          <a href="tel:+237676073009" style="flex:1; text-align:center; padding:10px; background:#4CAF50; color:white; text-decoration:none; border-radius:8px; font-weight:600; font-size:14px;">📞 Appeler</a>
-          <a href="https://wa.me/237676073009" target="_blank" style="flex:1; text-align:center; padding:10px; background:#25D366; color:white; text-decoration:none; border-radius:8px; font-weight:600; font-size:14px;">💬 WhatsApp</a>
-        </div>
-      </div>
-      <div style="margin-top:12px;">
-        <div style="font-size:15px; color:#333; margin-bottom:8px;">📱 <strong>693 18 06 08</strong></div>
-        <div style="display:flex; gap:8px;">
-          <a href="tel:+237693180608" style="flex:1; text-align:center; padding:10px; background:#4CAF50; color:white; text-decoration:none; border-radius:8px; font-weight:600; font-size:14px;">📞 Appeler</a>
-          <a href="https://wa.me/237693180608" target="_blank" style="flex:1; text-align:center; padding:10px; background:#25D366; color:white; text-decoration:none; border-radius:8px; font-weight:600; font-size:14px;">💬 WhatsApp</a>
-        </div>
-      </div>
-    </div>
-
-    <button class="btn-principal" onclick="ouvrirNouvelleCommandeRevendeur()">➕ Nouvelle commande</button>
-
-    <div id="form-commande-revendeur" class="formulaire" style="display:none;">
-      <h3>📦 Nouvelle commande</h3>
-      <p style="color:#F57C00; margin-bottom:15px; font-weight:600;">💰 Prix : 125 FCFA/bâton</p>
-      <label>Quantité (nombre de bâtons)</label>
-      <input type="number" id="rev-cmd-quantite" placeholder="Ex: 50" min="1" oninput="calculerTotalRevendeur()">
-      <div style="background:#FFF3E0; padding:15px; border-radius:10px; margin-top:15px; border-left:4px solid #F57C00;">
-        <span style="font-size:14px; color:#666;">💰 TOTAL :</span>
-        <strong id="rev-cmd-total" style="font-size:20px; color:#F57C00; margin-left:8px;">0 FCFA</strong>
-      </div>
-      <label style="margin-top:15px;">Date de livraison</label>
-      <input type="date" id="rev-cmd-date">
-      <button class="btn-save" onclick="enregistrerCommandeRevendeur()">💾 Envoyer la commande</button>
-      <button class="btn-annuler" onclick="fermerCommandeRevendeur()">Annuler</button>
-    </div>
-
-    <h3 style="margin-top:30px;">📋 Mes commandes</h3>
-    <div id="liste-commandes-revendeur">
-      <p style="color:#999;">Aucune commande pour l'instant.</p>
-    </div>
-  </div>
-</div>
-
-<div id="ecran-commandes" class="ecran">
-  <header class="entete">
-    <button class="btn-retour" onclick="afficherEcran('admin')">⬅️</button>
-    <h2>📦 Commandes</h2>
-    <span style="width:40px"></span>
-  </header>
-  <div class="contenu">
-    <div class="filtre-livreur">
-      <label>Date :</label>
-      <input type="date" id="commandes-date">
-      <button class="btn-principal" onclick="chargerCommandesGlobales()">🔄 Actualiser</button>
-    </div>
-    <div id="commandes-stats" style="background:#FFF3E0; padding:15px; border-radius:12px; margin:15px 0; border-left:4px solid #F57C00; font-weight:600; color:#F57C00;">⏳ Chargement...</div>
-    <h3 style="margin-top:20px;">📋 Détail des commandes</h3>
-    <div id="liste-commandes-globales">
-      <p style="color:#999;">Sélectionnez une date et actualisez.</p>
-    </div>
-  </div>
-</div>
-
-<div id="ecran-livraisons" class="ecran">
-  <header class="entete">
-    <button class="btn-retour" onclick="afficherEcran('admin')">⬅️</button>
-    <h2>✅ Livraisons</h2>
-    <span style="width:40px"></span>
-  </header>
-  <div class="contenu">
-    <div class="filtre-livreur">
-      <label>Date :</label>
-      <input type="date" id="livraisons-date">
-      <button class="btn-principal" onclick="chargerLivraisonsGlobales()">🔄 Actualiser</button>
-    </div>
-    <div id="livraisons-stats" style="background:#FFF3E0; padding:15px; border-radius:12px; margin:15px 0; border-left:4px solid #F57C00; font-weight:600; color:#F57C00;">⏳ Chargement...</div>
-    <h3 style="margin-top:20px;">🚚 Par livreur</h3>
-    <div id="stats-par-livreur">
-      <p style="color:#999;">Chargement...</p>
-    </div>
-    <h3 style="margin-top:25px;">📋 Détail des livraisons</h3>
-    <div id="liste-livraisons-globales">
-      <p style="color:#999;">Sélectionnez une date et actualisez.</p>
-    </div>
-  </div>
-</div>
-
-<div id="ecran-carte" class="ecran">
-  <header class="entete">
-    <button class="btn-retour" onclick="afficherEcran('admin')">⬅️</button>
-    <h2>🗺️ Carte des revendeurs</h2>
-    <span style="width:40px"></span>
-  </header>
-  <div class="contenu">
-    <div id="carte-info" style="background:#FFF3E0; padding:15px; border-radius:12px; margin-bottom:15px; border-left:4px solid #F57C00; font-weight:600; color:#F57C00;">⏳ Chargement...</div>
-    <div id="carte" style="height:500px; border-radius:12px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.1);"></div>
-    <h3 style="margin-top:20px;">📍 Revendeurs géolocalisés</h3>
-    <div id="liste-revendeurs-carte">
-      <p style="color:#999;">Chargement...</p>
-    </div>
-  </div>
-</div>
-
-<div id="ecran-livreurs" class="ecran">
-  <header class="entete">
-    <button class="btn-retour" onclick="afficherEcran('admin')">⬅️</button>
-    <h2>🚚 Mes livreurs</h2>
-    <span style="width:40px"></span>
-  </header>
-  <div class="contenu">
-    <button class="btn-principal" onclick="ouvrirFormulaireLivreur()">➕ Ajouter un livreur</button>
-    <div id="form-livreur" class="formulaire" style="display:none;">
-      <h3 id="form-livreur-titre">Nouveau livreur</h3>
-      <label>Nom complet</label>
-      <input type="text" id="liv-nom" placeholder="Ex: Jean Mbarga">
-      <label>Téléphone</label>
-      <input type="tel" id="liv-tel" placeholder="Ex: 6XX XX XX XX">
-      <label>Code PIN (4 chiffres)</label>
-      <input type="tel" id="liv-pin" placeholder="Ex: 1234" maxlength="4">
-      <label>Secteur</label>
-      <input type="text" id="liv-secteur" placeholder="Ex: Bonabéri Nord">
-      <label>Statut</label>
-      <select id="liv-statut">
-        <option value="actif">✅ Actif</option>
-        <option value="pause">⏸️ En pause</option>
-        <option value="parti">🚫 Parti</option>
-      </select>
-      <button class="btn-save" onclick="enregistrerLivreur()">💾 Enregistrer</button>
-      <button class="btn-annuler" onclick="fermerFormulaireLivreur()">Annuler</button>
-    </div>
-    <h3 style="margin-top:30px;">📋 Liste des livreurs</h3>
-    <div id="liste-livreurs">
-      <p style="color:#999;">Aucun livreur pour l'instant.</p>
-    </div>
-  </div>
-</div>
-
-<div id="ecran-parametres" class="ecran">
-  <header class="entete">
-    <button class="btn-retour" onclick="afficherEcran('admin')">⬅️</button>
-    <h2>⚙️ Paramètres</h2>
-    <span style="width:40px"></span>
-  </header>
-  <div class="contenu">
-    <div class="formulaire">
-      <h3>🔐 Changer le code administrateur</h3>
-      <p style="color:#666; font-size:14px; margin-bottom:15px;">Le code actuel protège votre accès admin.</p>
-      <label>Code actuel</label>
-      <input type="password" id="pwd-actuel" placeholder="••••••••" autocomplete="off">
-      <label>Nouveau code</label>
-      <input type="password" id="pwd-nouveau" placeholder="••••••••" autocomplete="off">
-      <label>Confirmer le nouveau code</label>
-      <input type="password" id="pwd-confirme" placeholder="••••••••" autocomplete="off">
-      <button class="btn-save" onclick="changerCodeAdmin()">💾 Enregistrer le nouveau code</button>
-    </div>
-    <p id="param-erreur" style="color:#F44336; text-align:center; font-weight:600; margin-top:15px;"></p>
-    <p id="param-succes" style="color:#4CAF50; text-align:center; font-weight:600; margin-top:15px;"></p>
-
-    <div class="formulaire" style="margin-top:30px;">
-      <h3>🔑 Changer le code d'accès à l'application</h3>
-      <p style="color:#666; font-size:14px; margin-bottom:15px;">Ce code protège l'accès à toute l'application.</p>
-      <label>Code actuel</label>
-      <input type="password" id="pwd-app-actuel" placeholder="••••••••" autocomplete="off">
-      <label>Nouveau code</label>
-      <input type="password" id="pwd-app-nouveau" placeholder="••••••••" autocomplete="off">
-      <label>Confirmer le nouveau code</label>
-      <input type="password" id="pwd-app-confirme" placeholder="••••••••" autocomplete="off">
-      <button class="btn-save" onclick="changerCodeApp()">💾 Enregistrer le nouveau code</button>
-    </div>
-    <p id="param-app-erreur" style="color:#F44336; text-align:center; font-weight:600; margin-top:15px;"></p>
-    <p id="param-app-succes" style="color:#4CAF50; text-align:center; font-weight:600; margin-top:15px;"></p>
-  </div>
-</div>
-
-<div id="modal-historique" class="modal">
-  <div class="modal-contenu">
-    <header class="modal-entete">
-      <h2 id="modal-titre">📊 Historique</h2>
-      <button class="btn-fermer" onclick="fermerHistorique()">✕</button>
-    </header>
-    <div id="modal-corps" class="modal-corps">
-      <p>Chargement...</p>
-    </div>
-  </div>
-</div>
-
-<audio id="son-notification" preload="auto">
-  <source src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" type="audio/ogg">
-</audio>
-
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyCJSlGP25Gon9ggHF5e1uW6ISQYJ98otyE",
-      authDomain: "atangana-bread-c1a31.firebaseapp.com",
-      projectId: "atangana-bread-c1a31",
-      storageBucket: "atangana-bread-c1a31.firebasestorage.app",
-      messagingSenderId: "284555168843",
-      appId: "1:284555168843:web:5c8fe97fca7c0abcb951ce"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    console.log("✅ Firebase connecté !");
-
-    const PRIX_BATON = 125;
-    const CODE_APP_DEFAUT = 'atangana2026';
-    let gpsActuel = null;
-    let pageActuelle = 1;
-    const itemsParPage = 10;
-    let livreurConnecte = null;
-    let revendeurConnecte = null;
-    let commandeRevendeurId = null;
-    let commandeRevendeurNom = null;
-    let tentativesAdmin = 0;
-    let adminBloque = false;
-    let adminBloqueJusqua = 0;
-    let carteGlobale = null;
-
-    function afficherEcran(nom) {
-      document.querySelectorAll('.ecran').forEach(e => e.classList.remove('actif'));
-      const ecran = document.getElementById('ecran-' + nom);
-      if (ecran) ecran.classList.add('actif');
-    }
-
-    // ===== PROTECTION GLOBALE =====
-    async function verifierCodeApp() {
-      const codeSaisi = document.getElementById('app-code').value;
-      const erreur = document.getElementById('app-code-erreur');
-      erreur.textContent = '';
-      if (!codeSaisi) { erreur.textContent = '❌ Entrez le code'; return; }
-      try {
-        const docRef = await db.collection('parametres').doc('app').get();
-        let codeAttendu = CODE_APP_DEFAUT;
-        if (docRef.exists && docRef.data().codeApp) {
-          codeAttendu = docRef.data().codeApp;
-        } else {
-          await db.collection('parametres').doc('app').set({ codeApp: CODE_APP_DEFAUT, dateCreation: new Date().toISOString() });
-        }
-        if (codeSaisi !== codeAttendu) {
-          erreur.textContent = '❌ Code incorrect';
-          document.getElementById('app-code').value = '';
-          return;
-        }
-        localStorage.setItem('appDebloquee', 'oui');
-        document.getElementById('app-code').value = '';
-        afficherEcran('connexion');
-      } catch (err) {
-        console.error(err);
-        erreur.textContent = '⚠️ Erreur : ' + err.message;
-      }
-    }
-
-    function verifierAccesApp() {
-      if (localStorage.getItem('appDebloquee') === 'oui') {
-        afficherEcran('connexion');
-      } else {
-        afficherEcran('code-app');
-      }
-    }
-
-    // ===== LOGIN ADMIN =====
-    async function connecterAdmin() {
-      const codeSaisi = document.getElementById('login-admin-code').value;
-      const erreur = document.getElementById('login-admin-erreur');
-      erreur.textContent = '';
-      if (adminBloque && Date.now() < adminBloqueJusqua) {
-        const sec = Math.ceil((adminBloqueJusqua - Date.now()) / 1000);
-        erreur.textContent = `⏸️ Trop d'essais. Attendez ${sec} secondes.`;
-        return;
-      }
-      if (adminBloque && Date.now() >= adminBloqueJusqua) { adminBloque = false; tentativesAdmin = 0; }
-      if (!codeSaisi) { erreur.textContent = '❌ Entrez le code d\'accès'; return; }
-      try {
-        const docRef = await db.collection('parametres').doc('admin').get();
-        let codeAttendu = 'makanda2026';
-        if (docRef.exists && docRef.data().codeAdmin) { codeAttendu = docRef.data().codeAdmin; }
-        else { await db.collection('parametres').doc('admin').set({ codeAdmin: 'makanda2026', dateCreation: new Date().toISOString() }); }
-        if (codeSaisi !== codeAttendu) {
-          tentativesAdmin++;
-          erreur.textContent = `❌ Code incorrect (${tentativesAdmin}/5)`;
-          document.getElementById('login-admin-code').value = '';
-          if (tentativesAdmin >= 5) { adminBloque = true; adminBloqueJusqua = Date.now() + 5 * 60 * 1000; erreur.textContent = '⏸️ Trop d\'essais. Attendez 5 minutes.'; }
-          return;
-        }
-        tentativesAdmin = 0; adminBloque = false;
-        document.getElementById('login-admin-code').value = '';
-        afficherEcran('admin');
-        chargerInfosAdmin();
-      } catch (err) { console.error(err); erreur.textContent = '⚠️ Erreur : ' + err.message; }
-    }
-
-    function choisirRole(role) {
-      if (role === 'admin') { afficherEcran('login-admin'); }
-      else if (role === 'livreur') { afficherEcran('login-livreur'); chargerLivreursDansLogin(); }
-      else if (role === 'revendeur') { afficherEcran('login-revendeur'); chargerRevendeursDansLogin(); }
-    }
-
-    function deconnecter() { afficherEcran('connexion'); }
-
-    async function chargerRevendeursDansLogin() {
-      try {
-        const snap = await db.collection('revendeurs').get();
-        const select = document.getElementById('login-rev-nom');
-        if (!select) return;
-        select.innerHTML = '<option value="">— Choisir —</option>';
-        snap.forEach(doc => {
-          const r = doc.data();
-          const opt = document.createElement('option');
-          opt.value = doc.id;
-          opt.textContent = r.nom + (r.quartier ? ' (' + r.quartier + ')' : '');
-          opt.dataset.tel = r.telephone || '';
-          opt.dataset.nom = r.nom;
-          select.appendChild(opt);
-        });
-      } catch (err) { console.error(err); }
-    }
-
-    function connecterRevendeur() {
-      const select = document.getElementById('login-rev-nom');
-      const telSaisi = document.getElementById('login-rev-tel').value.trim();
-      const erreur = document.getElementById('login-rev-erreur');
-      erreur.textContent = '';
-      if (!select.value) { erreur.textContent = '❌ Sélectionnez votre nom'; return; }
-      if (!telSaisi) { erreur.textContent = '❌ Entrez votre téléphone'; return; }
-      const option = select.options[select.selectedIndex];
-      const telAttendu = (option.dataset.tel || '').replace(/\s/g, '');
-      const telNettoye = telSaisi.replace(/\s/g, '');
-      const nomRevendeur = option.dataset.nom;
-      if (telNettoye !== telAttendu) { erreur.textContent = '❌ Téléphone incorrect'; return; }
-      revendeurConnecte = { id: select.value, nom: nomRevendeur, telephone: telAttendu };
-      document.getElementById('rev-info-nom').textContent = nomRevendeur;
-      document.getElementById('rev-info-tel').textContent = telAttendu;
-      document.getElementById('titre-revendeur-connecte').textContent = '🏪 ' + nomRevendeur;
-      afficherEcran('revendeur');
-      chargerCommandesRevendeur();
-    }
-
-    function deconnecterRevendeur() {
-      revendeurConnecte = null;
-      document.getElementById('login-rev-tel').value = '';
-      document.getElementById('login-rev-nom').value = '';
-      document.getElementById('login-rev-erreur').textContent = '';
-      afficherEcran('login-revendeur');
-      chargerRevendeursDansLogin();
-    }
-
-    async function chargerCommandesRevendeur() {
-      const liste = document.getElementById('liste-commandes-revendeur');
-      if (!liste) return;
-      liste.innerHTML = '<p style="color:#999;">⏳ Chargement...</p>';
-      try {
-        const snap = await db.collection('commandes').where('revendeurId', '==', revendeurConnecte.id).get();
-        if (snap.empty) { liste.innerHTML = '<p style="color:#999;">Aucune commande.</p>'; return; }
-        const commandes = [];
-        snap.forEach(doc => commandes.push({ id: doc.id, ...doc.data() }));
-        commandes.sort((a, b) => (b.dateLivraison || '').localeCompare(a.dateLivraison || ''));
-        let html = '';
-        commandes.forEach(c => {
-          const emoji = c.statut === 'livre' ? '✅' : (c.statut === 'non_livre' ? '❌' : '⏳');
-          const libelle = c.statut === 'livre' ? 'Livré' : (c.statut === 'non_livre' ? 'Non livré' : 'En attente');
-          const total = (c.prixTotal || 0).toLocaleString('fr-FR');
-          html += `<div class="carte-commande"><div class="commande-info"><strong>${emoji} ${c.dateLivraison}</strong><br><span>${c.quantite} bâtons — ${libelle}</span><br><span style="color:#F57C00; font-weight:700;">💰 ${total} FCFA</span></div></div>`;
-        });
-        liste.innerHTML = html;
-      } catch (err) { console.error(err); liste.innerHTML = '<p style="color:red;">⚠️ Erreur</p>'; }
-    }
-
-    function ouvrirNouvelleCommandeRevendeur() {
-      document.getElementById('form-commande-revendeur').style.display = 'block';
-      document.getElementById('rev-cmd-quantite').value = '';
-      document.getElementById('rev-cmd-total').textContent = '0 FCFA';
-      const demain = new Date();
-      demain.setDate(demain.getDate() + 1);
-      document.getElementById('rev-cmd-date').value = demain.toISOString().split('T')[0];
-      document.getElementById('form-commande-revendeur').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    function fermerCommandeRevendeur() { document.getElementById('form-commande-revendeur').style.display = 'none'; }
-
-    function calculerTotalRevendeur() {
-      const quantite = parseInt(document.getElementById('rev-cmd-quantite').value) || 0;
-      const total = quantite * PRIX_BATON;
-      document.getElementById('rev-cmd-total').textContent = total.toLocaleString('fr-FR') + ' FCFA';
-    }
-
-    async function enregistrerCommandeRevendeur() {
-      const quantite = parseInt(document.getElementById('rev-cmd-quantite').value);
-      const dateLivraison = document.getElementById('rev-cmd-date').value;
-      if (!quantite || quantite <= 0) { alert('Entrez une quantité valide'); return; }
-      if (!dateLivraison) { alert('Choisissez une date'); return; }
-      const aujourdhui = new Date().toISOString().split('T')[0];
-      const prixTotal = quantite * PRIX_BATON;
-      let cmdLivreurId = null, cmdLivreurNom = null;
-      try {
-        const revDoc = await db.collection('revendeurs').doc(revendeurConnecte.id).get();
-        const revData = revDoc.data();
-        if (revData && revData.livreurId) { cmdLivreurId = revData.livreurId; cmdLivreurNom = revData.livreurNom; }
-      } catch (e) {}
-      try {
-        await db.collection('commandes').add({
-          revendeurId: revendeurConnecte.id,
-          revendeurNom: revendeurConnecte.nom,
-          quantite: quantite,
-          prixUnitaire: PRIX_BATON,
-          prixTotal: prixTotal,
-          dateCommande: aujourdhui,
-          dateLivraison: dateLivraison,
-          statut: 'en_attente',
-          livreurId: cmdLivreurId,
-          livreurNom: cmdLivreurNom,
-          source: 'revendeur'
-        });
-        alert('✅ Commande envoyée !');
-        fermerCommandeRevendeur();
-        chargerCommandesRevendeur();
-      } catch (err) { console.error(err); alert('❌ Erreur : ' + err.message); }
-    }
-
-    // ===== LOGIN LIVREUR =====
-    async function chargerLivreursDansLogin() {
-      try {
-        const snap = await db.collection('livreurs').get();
-        const select = document.getElementById('login-livreur-nom');
-        if (!select) return;
-        select.innerHTML = '<option value="">— Choisir —</option>';
-        snap.forEach(doc => {
-          const l = doc.data();
-          if (l.statut === 'actif') {
-            const opt = document.createElement('option');
-            opt.value = doc.id;
-            opt.textContent = l.nom + ' (' + l.secteur + ')';
-            opt.dataset.pin = l.pin;
-            opt.dataset.nom = l.nom;
-            select.appendChild(opt);
-          }
-        });
-      } catch (err) { console.error(err); }
-    }
-
-    function connecterLivreur() {
-      const select = document.getElementById('login-livreur-nom');
-      const pinSaisi = document.getElementById('login-livreur-pin').value.trim();
-      const erreur = document.getElementById('login-livreur-erreur');
-      erreur.textContent = '';
-      if (!select.value) { erreur.textContent = '❌ Sélectionnez votre nom'; return; }
-      if (!pinSaisi || pinSaisi.length !== 4) { erreur.textContent = '❌ PIN à 4 chiffres'; return; }
-      const option = select.options[select.selectedIndex];
-      if (pinSaisi !== option.dataset.pin) {
-        erreur.textContent = '❌ PIN incorrect';
-        document.getElementById('login-livreur-pin').value = '';
-        return;
-      }
-      livreurConnecte = { id: select.value, nom: option.dataset.nom };
-      document.getElementById('titre-livreur-connecte').textContent = '🚚 ' + livreurConnecte.nom;
-      afficherEcran('livreur');
-      chargerLivraisonsLivreur();
-    }
-
-    function deconnecterLivreur() {
-      livreurConnecte = null;
-      document.getElementById('login-livreur-pin').value = '';
-      document.getElementById('login-livreur-nom').value = '';
-      document.getElementById('login-livreur-erreur').textContent = '';
-      afficherEcran('login-livreur');
-      chargerLivreursDansLogin();
-    }
-
-    async function chargerInfosAdmin() {
-      const info = document.getElementById('info-admin');
-      info.textContent = "⏳ Chargement...";
-      try {
-        const snap = await db.collection('revendeurs').get();
-        info.innerHTML = `👥 <strong>${snap.size}</strong> revendeur(s) enregistré(s)`;
-      } catch (err) { console.error(err); info.textContent = "⚠️ Erreur"; }
-    }
-
-    // ===== REVENDEURS =====
-    function pagePrecedente() { if (pageActuelle > 1) { pageActuelle--; chargerListeRevendeurs(); } }
-    function pageSuivante() { pageActuelle++; chargerListeRevendeurs(); }
-
-    function ouvrirRevendeurs() {
-      afficherEcran('revendeurs');
-      chargerFiltresLivreurs();
-      chargerFiltresQuartiers();
-      chargerListeRevendeurs();
-    }
-
-    async function chargerFiltresLivreurs() {
-      try {
-        const snap = await db.collection('livreurs').get();
-        const select = document.getElementById('filtre-livreur');
-        if (!select) return;
-        select.innerHTML = '<option value="">🚚 Tous livreurs</option>';
-        snap.forEach(doc => {
-          const l = doc.data();
-          const opt = document.createElement('option');
-          opt.value = doc.id;
-          opt.textContent = l.nom;
-          select.appendChild(opt);
-        });
-      } catch (err) { console.error(err); }
-    }
-
-    async function chargerFiltresQuartiers() {
-      try {
-        const snap = await db.collection('revendeurs').get();
-        const select = document.getElementById('filtre-quartier');
-        if (!select) return;
-        const quartiers = new Set();
-        snap.forEach(doc => {
-          const r = doc.data();
-          if (r.quartier) quartiers.add(r.quartier);
-        });
-        select.innerHTML = '<option value="">🏘️ Tous quartiers</option>';
-        Array.from(quartiers).sort().forEach(q => {
-          const opt = document.createElement('option');
-          opt.value = q;
-          opt.textContent = q;
-          select.appendChild(opt);
-        });
-      } catch (err) { console.error(err); }
-    }
-
-    async function chargerLivreursDansSelect() {
-      try {
-        const snap = await db.collection('livreurs').get();
-        const select = document.getElementById('rev-livreur');
-        if (!select) return;
-        select.innerHTML = '<option value="">— Aucun (admin) —</option>';
-        snap.forEach(doc => {
-          const l = doc.data();
-          if (l.statut === 'actif') {
-            const opt = document.createElement('option');
-            opt.value = doc.id;
-            opt.textContent = l.nom + ' (' + l.secteur + ')';
-            opt.dataset.nom = l.nom;
-            select.appendChild(opt);
-          }
-        });
-      } catch (err) { console.error(err); }
-    }
-
-    function ouvrirFormulaire() {
-      document.getElementById('form-revendeur').style.display = 'block';
-      document.getElementById('form-commande').style.display = 'none';
-      chargerLivreursDansSelect();
-      document.getElementById('form-revendeur').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    function fermerFormulaire() {
-      document.getElementById('form-revendeur').style.display = 'none';
-      document.getElementById('rev-nom').value = '';
-      document.getElementById('rev-tel').value = '';
-      document.getElementById('rev-quartier').value = '';
-      document.getElementById('rev-gps-info').textContent = 'Non définie';
-      gpsActuel = null;
-    }
-
-    function recupererGPS() {
-      const info = document.getElementById('rev-gps-info');
-      info.textContent = '⏳ Recherche...';
-      if (!navigator.geolocation) { info.textContent = '❌ GPS non dispo'; return; }
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          gpsActuel = { latitude: pos.coords.latitude, longitude: pos.coords.longitude };
-          info.textContent = `✅ ${gpsActuel.latitude.toFixed(4)}, ${gpsActuel.longitude.toFixed(4)}`;
-        },
-        (err) => { info.textContent = '❌ Position refusée'; }
-      );
-    }
-
-    async function enregistrerRevendeur() {
-      const nom = document.getElementById('rev-nom').value.trim();
-      const tel = document.getElementById('rev-tel').value.trim();
-      const quartier = document.getElementById('rev-quartier').value.trim();
-      if (!nom) { alert('Le nom est obligatoire'); return; }
-      const livreurSelect = document.getElementById('rev-livreur');
-      const livreurId = livreurSelect && livreurSelect.value ? livreurSelect.value : null;
-      const livreurNom = livreurId ? livreurSelect.options[livreurSelect.selectedIndex].dataset.nom : null;
-      try {
-        await db.collection('revendeurs').add({
-          nom: nom, telephone: tel, quartier: quartier,
-          latitude: gpsActuel ? gpsActuel.latitude : null,
-          longitude: gpsActuel ? gpsActuel.longitude : null,
-          livreurId: livreurId, livreurNom: livreurNom,
-          dateAjout: new Date().toISOString()
-        });
-        alert('✅ Revendeur enregistré !');
-        fermerFormulaire();
-        chargerListeRevendeurs();
-      } catch (err) { console.error(err); alert('❌ Erreur : ' + err.message); }
-    }
-
-    async function chargerListeRevendeurs() {
-      try {
-        const liste = document.getElementById('liste-revendeurs');
-        liste.innerHTML = '<p style="color:#999;">⏳ Chargement...</p>';
-        const snap = await db.collection('revendeurs').get();
-        const recherche = (document.getElementById('recherche-revendeur')?.value || '').toLowerCase().trim();
-        if (snap.empty) { liste.innerHTML = '<p style="color:#999;">Aucun revendeur.</p>'; return; }
-        let html = '';
-        let resultatsFiltres = 0;
-        const debutPage = (pageActuelle - 1) * itemsParPage;
-        let compteur = 0;
-        snap.forEach(doc => {
-          const r = doc.data();
-          const nomMatch = (r.nom || '').toLowerCase().includes(recherche);
-          const telMatch = (r.telephone || '').toLowerCase().includes(recherche);
-          if (recherche && !nomMatch && !telMatch) return;
-          const filtreLiv = document.getElementById('filtre-livreur')?.value || '';
-          if (filtreLiv && r.livreurId !== filtreLiv) return;
-          const filtreQ = document.getElementById('filtre-quartier')?.value || '';
-          if (filtreQ && r.quartier !== filtreQ) return;
-          resultatsFiltres++;
-          compteur++;
-          if (compteur <= debutPage) return;
-          if (compteur > debutPage + itemsParPage) return;
-    // Nettoyer et formater le numéro pour l'appel
-let telNettoye = (r.telephone || '').replace(/[^0-9+]/g, '');
-if (/^[62]\d{8}$/.test(telNettoye)) {
-  telNettoye = '+237' + telNettoye;
-} else if (telNettoye.startsWith('00237')) {
-  telNettoye = '+' + telNettoye.slice(2);
-} else if (telNettoye && !telNettoye.startsWith('+')) {
-  telNettoye = '+237' + telNettoye;
+body {
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  background: #f5f5f7;
+  color: #222;
+  min-height: 100vh;
 }
-const boutonAppel = r.telephone ? `<a href="tel:${telNettoye}" style="display:block; margin-top:8px; padding:12px; background:#2196F3; color:white; text-decoration:none; text-align:center; border-radius:10px; font-weight:600; font-size:14px;">📞 Appeler ${r.telephone}</a>` : '';
-          html += `<div class="carte-revendeur"><strong>👤 ${r.nom}</strong><br>📞 ${r.telephone || 'Non renseigné'}<br>🏘️ ${r.quartier || 'Non renseigné'}<br>🚚 ${r.livreurNom || 'Admin'}<br>💰 ${PRIX_BATON} FCFA/bâton<div class="actions-revendeur"><button class="btn-commande" onclick="ouvrirCommande('${doc.id}', '${r.nom.replace(/'/g, "\\'")}')">📦 Commander</button><button class="btn-historique" onclick="voirHistorique('${doc.id}', '${r.nom.replace(/'/g, "\\'")}')">📊 Historique</button></div>${boutonAppel}</div>`;
-        });
-        liste.innerHTML = html;
-        const totalPages = Math.ceil(resultatsFiltres / itemsParPage);
-        const pagination = document.getElementById('pagination');
-        if (totalPages > 1) {
-          pagination.style.display = 'flex';
-          document.getElementById('pagination-info').textContent = `Page ${pageActuelle}/${totalPages}`;
-          document.getElementById('btn-prev').disabled = pageActuelle <= 1;
-          document.getElementById('btn-next').disabled = pageActuelle >= totalPages;
-        } else { pagination.style.display = 'none'; }
-      } catch (err) { console.error(err); }
-    }
 
-    function ouvrirCommande(revendeurId, revendeurNom) {
-      commandeRevendeurId = revendeurId;
-      commandeRevendeurNom = revendeurNom;
-      document.getElementById('cmd-revendeur-nom').textContent = revendeurNom;
-      document.getElementById('cmd-quantite').value = '';
-      document.getElementById('cmd-prix-unitaire').textContent = PRIX_BATON;
-      document.getElementById('cmd-total').textContent = '0 FCFA';
-      const demain = new Date();
-      demain.setDate(demain.getDate() + 1);
-      document.getElementById('cmd-date').value = demain.toISOString().split('T')[0];
-      document.getElementById('form-revendeur').style.display = 'none';
-      document.getElementById('form-commande').style.display = 'block';
-      document.getElementById('form-commande').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+.ecran { 
+  display: none; 
+  min-height: 100vh; 
+  flex-direction: column; 
+}
 
-    function calculerTotalCommande() {
-      const quantite = parseInt(document.getElementById('cmd-quantite').value) || 0;
-      const total = quantite * PRIX_BATON;
-      document.getElementById('cmd-total').textContent = total.toLocaleString('fr-FR') + ' FCFA';
-    }
+.ecran.actif { 
+  display: flex; 
+}
 
-    function fermerCommande() {
-      document.getElementById('form-commande').style.display = 'none';
-      commandeRevendeurId = null;
-      commandeRevendeurNom = null;
-    }
+#ecran-connexion {
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  background: linear-gradient(160deg, #FFB74D 0%, #F57C00 100%);
+  color: white;
+  text-align: center;
+}
 
-    async function enregistrerCommande() {
-      const quantite = parseInt(document.getElementById('cmd-quantite').value);
-      const dateLivraison = document.getElementById('cmd-date').value;
-      const prixTotal = quantite * PRIX_BATON;
-      if (!quantite || quantite <= 0) { alert('Quantité invalide'); return; }
-      const aujourdhui = new Date().toISOString().split('T')[0];
-      let cmdLivreurId = null, cmdLivreurNom = null;
-      try {
-        const revDoc = await db.collection('revendeurs').doc(commandeRevendeurId).get();
-        const revData = revDoc.data();
-        if (revData && revData.livreurId) { cmdLivreurId = revData.livreurId; cmdLivreurNom = revData.livreurNom; }
-      } catch (e) {}
-      try {
-        await db.collection('commandes').add({
-          revendeurId: commandeRevendeurId,
-          revendeurNom: commandeRevendeurNom,
-          quantite: quantite,
-          dateCommande: aujourdhui,
-          dateLivraison: dateLivraison,
-          statut: 'en_attente',
-          prixUnitaire: PRIX_BATON,
-          prixTotal: prixTotal,
-          livreurId: cmdLivreurId,
-          livreurNom: cmdLivreurNom
-        });
-        alert('✅ Commande enregistrée !');
-        fermerCommande();
-      } catch (err) { console.error(err); alert('❌ Erreur : ' + err.message); }
-    }
+.logo {
+  margin-bottom: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-    async function voirHistorique(revendeurId, revendeurNom) {
-      document.getElementById('modal-titre').textContent = '📊 ' + revendeurNom;
-      document.getElementById('modal-corps').innerHTML = '<p>⏳ Chargement...</p>';
-      document.getElementById('modal-historique').classList.add('actif');
-      try {
-        const snap = await db.collection('commandes').where('revendeurId', '==', revendeurId).get();
-        if (snap.empty) { document.getElementById('modal-corps').innerHTML = '<p style="color:#999;">Aucune commande.</p>'; return; }
-        const commandes = [];
-        snap.forEach(doc => commandes.push({ id: doc.id, ...doc.data() }));
-        commandes.sort((a, b) => (b.dateLivraison || '').localeCompare(a.dateLivraison || ''));
-        let html = '';
-        commandes.forEach(c => {
-          const emoji = c.statut === 'livre' ? '✅' : (c.statut === 'non_livre' ? '❌' : '⏳');
-          const libelle = c.statut === 'livre' ? 'Livré' : (c.statut === 'non_livre' ? 'Non livré' : 'En attente');
-          html += `<div class="carte-commande"><div class="commande-info"><strong>${emoji} ${c.dateLivraison}</strong><br><span>${c.quantite} bâtons</span><br><span style="color:#F57C00; font-weight:700;">💰 ${(c.prixTotal || 0).toLocaleString('fr-FR')} FCFA</span></div><div class="commande-statut">${libelle}</div><div class="commande-actions"><button class="btn-livre" onclick="marquerStatut('${c.id}', 'livre')">✅ Livré</button><button class="btn-non-livre" onclick="marquerStatut('${c.id}', 'non_livre')">❌ Non livré</button></div></div>`;
-        });
-        document.getElementById('modal-corps').innerHTML = html;
-      } catch (err) { console.error(err); }
-    }
+.logo img {
+  width: 130px;
+  height: 130px;
+  object-fit: cover;
+  border-radius: 50%;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+  border: 4px solid white;
+  display: block;
+}
 
-    function fermerHistorique() { document.getElementById('modal-historique').classList.remove('actif'); }
+#ecran-connexion h1 {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  color: white;
+}
 
-    async function marquerStatut(commandeId, nouveauStatut) {
-      try {
-        await db.collection('commandes').doc(commandeId).update({ statut: nouveauStatut, dateMaj: new Date().toISOString() });
-        const doc = await db.collection('commandes').doc(commandeId).get();
-        const data = doc.data();
-        voirHistorique(data.revendeurId, data.revendeurNom);
-      } catch (err) { console.error(err); alert('❌ Erreur'); }
-    }
+.sous-titre { 
+  font-size: 15px; 
+  opacity: 0.95; 
+  margin-bottom: 45px;
+  color: white;
+}
 
-    async function chargerLivraisonsLivreur() {
-      const dateInput = document.getElementById('livreur-date');
-      const date = dateInput.value || new Date().toISOString().split('T')[0];
-      dateInput.value = date;
-      const info = document.getElementById('info-livreur');
-      const liste = document.getElementById('liste-livraisons');
-      info.textContent = '⏳ Chargement...';
-      liste.innerHTML = '';
-      try {
-        let requete = db.collection('commandes').where('dateLivraison', '==', date);
-        if (livreurConnecte) requete = requete.where('livreurId', '==', livreurConnecte.id);
-        const snap = await requete.get();
-        if (snap.empty) { info.textContent = '📭 Aucune livraison.'; return; }
-        let enAttente = 0, livres = 0, nonLivres = 0;
-        const commandes = [];
-        snap.forEach(doc => {
-          const c = { id: doc.id, ...doc.data() };
-          commandes.push(c);
-          if (c.statut === 'livre') livres++;
-          else if (c.statut === 'non_livre') nonLivres++;
-          else enAttente++;
-        });
-        commandes.sort((a, b) => (a.revendeurNom || '').localeCompare(b.revendeurNom || ''));
-        info.innerHTML = `⏳ ${enAttente} | ✅ ${livres} | ❌ ${nonLivres}`;
-        let html = '';
-        commandes.forEach(c => {
-          const emoji = c.statut === 'livre' ? '✅' : (c.statut === 'non_livre' ? '❌' : '⏳');
-          const libelle = c.statut === 'livre' ? 'Livré' : (c.statut === 'non_livre' ? 'Non livré' : 'En attente');
-          html += `<div class="carte-commande"><div class="commande-info"><strong>${emoji} ${c.revendeurNom}</strong><br><span>${c.quantite} bâtons — ${libelle}</span><br><span style="color:#F57C00; font-weight:700;">💰 ${(c.prixTotal || 0).toLocaleString('fr-FR')} FCFA</span></div><div class="commande-actions"><button class="btn-livre" onclick="marquerStatutLivreur('${c.id}', 'livre')">✅ Livré</button><button class="btn-non-livre" onclick="marquerStatutLivreur('${c.id}', 'non_livre')">❌ Non livré</button></div></div>`;
-        });
-        liste.innerHTML = html;
-      } catch (err) { console.error(err); info.textContent = '⚠️ Erreur'; }
-    }
+.choix-role {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+  max-width: 340px;
+}
 
-    async function marquerStatutLivreur(commandeId, nouveauStatut) {
-      try {
-        await db.collection('commandes').doc(commandeId).update({ statut: nouveauStatut, dateMaj: new Date().toISOString() });
-        chargerLivraisonsLivreur();
-      } catch (err) { console.error(err); alert('❌ Erreur'); }
-    }
+.btn-role {
+  padding: 18px;
+  font-size: 17px;
+  font-weight: 700;
+  border: none;
+  border-radius: 15px;
+  background: white;
+  color: #F57C00;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
 
-    // ===== LIVREURS =====
-    function ouvrirLivreurs() { afficherEcran('livreurs'); chargerListeLivreurs(); }
+.btn-role:active { 
+  transform: scale(0.97); 
+  background: #FFF3E0; 
+}
 
-    function ouvrirFormulaireLivreur() {
-      document.getElementById('form-livreur').style.display = 'block';
-      document.getElementById('form-livreur-titre').textContent = 'Nouveau livreur';
-      document.getElementById('liv-nom').value = '';
-      document.getElementById('liv-tel').value = '';
-      document.getElementById('liv-pin').value = '';
-      document.getElementById('liv-secteur').value = '';
-      document.getElementById('liv-statut').value = 'actif';
-    }
+.entete {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #F57C00;
+  color: white;
+  padding: 18px 20px;
+}
 
-    function fermerFormulaireLivreur() { document.getElementById('form-livreur').style.display = 'none'; }
+.entete h2 { 
+  font-size: 20px; 
+  font-weight: 700; 
+  color: white;
+}
 
-    async function enregistrerLivreur() {
-      const nom = document.getElementById('liv-nom').value.trim();
-      const tel = document.getElementById('liv-tel').value.trim();
-      const pin = document.getElementById('liv-pin').value.trim();
-      const secteur = document.getElementById('liv-secteur').value.trim();
-      const statut = document.getElementById('liv-statut').value;
-      if (!nom) { alert('Nom obligatoire'); return; }
-      if (!pin || pin.length !== 4) { alert('PIN à 4 chiffres'); return; }
-      if (!secteur) { alert('Secteur obligatoire'); return; }
-      try {
-        const pinExiste = await db.collection('livreurs').where('pin', '==', pin).get();
-        if (!pinExiste.empty) { alert('❌ PIN déjà utilisé'); return; }
-        if (statut !== 'parti') {
-          const secteurExiste = await db.collection('livreurs').where('secteur', '==', secteur).get();
-          let conflit = false;
-          secteurExiste.forEach(doc => { if (doc.data().statut !== 'parti') conflit = true; });
-          if (conflit) { alert('❌ Secteur déjà pris'); return; }
-        }
-        await db.collection('livreurs').add({ nom, telephone: tel, pin, secteur, statut, dateAjout: new Date().toISOString() });
-        alert('✅ Livreur enregistré !');
-        fermerFormulaireLivreur();
-        chargerListeLivreurs();
-      } catch (err) { console.error(err); alert('❌ Erreur'); }
-    }
+.btn-deco {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: white;
+  font-size: 20px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+}
 
-    async function chargerListeLivreurs() {
-      const liste = document.getElementById('liste-livreurs');
-      liste.innerHTML = '<p style="color:#999;">⏳ Chargement...</p>';
-      try {
-        const snap = await db.collection('livreurs').get();
-        if (snap.empty) { liste.innerHTML = '<p style="color:#999;">Aucun livreur.</p>'; return; }
-        let html = '';
-        snap.forEach(doc => {
-          const l = doc.data();
-          const emoji = l.statut === 'actif' ? '✅' : (l.statut === 'pause' ? '⏸️' : '🚫');
-          const libelle = l.statut === 'actif' ? 'Actif' : (l.statut === 'pause' ? 'En pause' : 'Parti');
-          const couleur = l.statut === 'actif' ? '#4CAF50' : (l.statut === 'pause' ? '#FF9800' : '#9E9E9E');
-          html += `<div class="carte-revendeur" style="border-left-color: ${couleur};"><strong>${emoji} ${l.nom}</strong><br>📞 ${l.telephone || 'Non renseigné'}<br>📍 Secteur : ${l.secteur}<br>🔑 PIN : ••••<div class="commande-statut" style="margin-top:8px;">${libelle}</div></div>`;
-        });
-        liste.innerHTML = html;
-      } catch (err) { console.error(err); }
-    }
+.btn-retour {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: white;
+  font-size: 18px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+}
 
-    // ===== COMMANDES GLOBALES =====
-    function ouvrirCommandesGlobales() {
-      afficherEcran('commandes');
-      const dateInput = document.getElementById('commandes-date');
-      if (!dateInput.value) dateInput.value = new Date().toISOString().split('T')[0];
-      chargerCommandesGlobales();
-    }
+.contenu { 
+  padding: 20px; 
+  flex: 1; 
+}
 
-    async function chargerCommandesGlobales() {
-      const date = document.getElementById('commandes-date').value;
-      const stats = document.getElementById('commandes-stats');
-      const liste = document.getElementById('liste-commandes-globales');
-      stats.innerHTML = '⏳ Chargement...';
-      liste.innerHTML = '';
-      try {
-        const snap = await db.collection('commandes').where('dateLivraison', '==', date).get();
-        if (snap.empty) { stats.innerHTML = `📭 Aucune commande pour le ${date}`; return; }
-        let totalBaton = 0, totalFCFA = 0, enAttente = 0, livres = 0, nonLivres = 0;
-        const commandes = [];
-        snap.forEach(doc => {
-          const c = { id: doc.id, ...doc.data() };
-          commandes.push(c);
-          totalBaton += c.quantite || 0;
-          totalFCFA += c.prixTotal || 0;
-          if (c.statut === 'livre') livres++;
-          else if (c.statut === 'non_livre') nonLivres++;
-          else enAttente++;
-        });
-        commandes.sort((a, b) => (a.revendeurNom || '').localeCompare(b.revendeurNom || ''));
-        stats.innerHTML = `📊 <strong>${commandes.length}</strong> commande(s)<br>🥖 <strong>${totalBaton.toLocaleString('fr-FR')}</strong> bâtons<br>💰 <strong>${totalFCFA.toLocaleString('fr-FR')} FCFA</strong><br><span style="font-size:13px;">⏳ ${enAttente} | ✅ ${livres} | ❌ ${nonLivres}</span>`;
-        let html = '';
-        commandes.forEach(c => {
-          const emoji = c.statut === 'livre' ? '✅' : (c.statut === 'non_livre' ? '❌' : '⏳');
-          const libelle = c.statut === 'livre' ? 'Livré' : (c.statut === 'non_livre' ? 'Non livré' : 'En attente');
-          const total = (c.prixTotal || 0).toLocaleString('fr-FR');
-          html += `<div class="carte-commande"><div class="commande-info"><strong>${emoji} ${c.revendeurNom}</strong><br><span>${c.quantite} bâtons — ${libelle}</span><br><span style="color:#F57C00; font-weight:700;">💰 ${total} FCFA</span><br><span style="color:#666; font-size:13px;">🚚 ${c.livreurNom || 'Admin'}</span></div></div>`;
-        });
-        liste.innerHTML = html;
-      } catch (err) { console.error(err); stats.innerHTML = '⚠️ Erreur'; }
-    }
+.contenu h3 { 
+  font-size: 20px; 
+  margin-bottom: 15px; 
+  color: #F57C00; 
+}
 
-    // ===== LIVRAISONS GLOBALES =====
-    function ouvrirLivraisonsGlobales() {
-      afficherEcran('livraisons');
-      const dateInput = document.getElementById('livraisons-date');
-      if (!dateInput.value) dateInput.value = new Date().toISOString().split('T')[0];
-      chargerLivraisonsGlobales();
-    }
+.contenu p { 
+  color: #555; 
+  font-size: 15px; 
+  margin-bottom: 25px; 
+}
 
-    async function chargerLivraisonsGlobales() {
-      const date = document.getElementById('livraisons-date').value;
-      const stats = document.getElementById('livraisons-stats');
-      const statsLivreurs = document.getElementById('stats-par-livreur');
-      const liste = document.getElementById('liste-livraisons-globales');
-      stats.innerHTML = '⏳ Chargement...';
-      statsLivreurs.innerHTML = '';
-      liste.innerHTML = '';
-      try {
-        const snap = await db.collection('commandes').where('dateLivraison', '==', date).get();
-        if (snap.empty) { stats.innerHTML = `📭 Aucune livraison pour le ${date}`; return; }
-        let totalBaton = 0, totalFCFA = 0, enAttente = 0, livres = 0, nonLivres = 0;
-        const commandes = [];
-        const parLivreur = {};
-        snap.forEach(doc => {
-          const c = { id: doc.id, ...doc.data() };
-          commandes.push(c);
-          totalBaton += c.quantite || 0;
-          totalFCFA += c.prixTotal || 0;
-          if (c.statut === 'livre') livres++;
-          else if (c.statut === 'non_livre') nonLivres++;
-          else enAttente++;
-          const livreurNom = c.livreurNom || 'Admin (non assigné)';
-          if (!parLivreur[livreurNom]) parLivreur[livreurNom] = { nom: livreurNom, enAttente: 0, livres: 0, nonLivres: 0, totalFCFA: 0, totalBaton: 0 };
-          const pl = parLivreur[livreurNom];
-          pl.totalBaton += c.quantite || 0;
-          if (c.statut === 'livre') { pl.livres++; pl.totalFCFA += c.prixTotal || 0; }
-          else if (c.statut === 'non_livre') pl.nonLivres++;
-          else pl.enAttente++;
-        });
-        stats.innerHTML = `📊 <strong>${commandes.length}</strong> livraison(s)<br>🥖 <strong>${totalBaton.toLocaleString('fr-FR')}</strong> bâtons<br>💰 <strong>${totalFCFA.toLocaleString('fr-FR')} FCFA</strong><br><span style="font-size:13px;">⏳ ${enAttente} | ✅ ${livres} | ❌ ${nonLivres}</span>`;
-        let htmlLivreurs = '';
-        Object.values(parLivreur).sort((a, b) => a.nom.localeCompare(b.nom)).forEach(pl => {
-          htmlLivreurs += `<div class="carte-revendeur" style="margin-bottom:12px;"><strong>🚚 ${pl.nom}</strong><br>📦 ${pl.totalBaton} bâtons<br><span style="font-size:13px;">⏳ ${pl.enAttente} | ✅ ${pl.livres} | ❌ ${pl.nonLivres}</span><br><span style="color:#F57C00; font-weight:700;">💰 ${pl.totalFCFA.toLocaleString('fr-FR')} FCFA encaissés</span></div>`;
-        });
-        statsLivreurs.innerHTML = htmlLivreurs;
-        commandes.sort((a, b) => (a.revendeurNom || '').localeCompare(b.revendeurNom || ''));
-        let html = '';
-        commandes.forEach(c => {
-          const emoji = c.statut === 'livre' ? '✅' : (c.statut === 'non_livre' ? '❌' : '⏳');
-          const libelle = c.statut === 'livre' ? 'Livré' : (c.statut === 'non_livre' ? 'Non livré' : 'En attente');
-          html += `<div class="carte-commande"><div class="commande-info"><strong>${emoji} ${c.revendeurNom}</strong><br><span>${c.quantite} bâtons — ${libelle}</span><br><span style="color:#F57C00; font-weight:700;">💰 ${(c.prixTotal || 0).toLocaleString('fr-FR')} FCFA</span><br><span style="color:#666; font-size:13px;">🚚 ${c.livreurNom || 'Admin'}</span></div></div>`;
-        });
-        liste.innerHTML = html;
-      } catch (err) { console.error(err); stats.innerHTML = '⚠️ Erreur'; }
-    }
+.grille-boutons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
 
-    // ===== CARTE =====
-    function ouvrirCarteRevendeurs() { afficherEcran('carte'); chargerCarteRevendeurs(); }
+.btn-action {
+  padding: 25px 15px;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  border-radius: 15px;
+  background: white;
+  color: #333;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
 
-    async function chargerCarteRevendeurs() {
-      const info = document.getElementById('carte-info');
-      const liste = document.getElementById('liste-revendeurs-carte');
-      info.innerHTML = '⏳ Chargement...';
-      liste.innerHTML = '';
-      try {
-        const snap = await db.collection('revendeurs').get();
-        let total = 0, geolocalises = 0;
-        const revendeursAvecGPS = [];
-        const revendeursSansGPS = [];
-        snap.forEach(doc => {
-          const r = { id: doc.id, ...doc.data() };
-          total++;
-          if (r.latitude && r.longitude) { geolocalises++; revendeursAvecGPS.push(r); }
-          else revendeursSansGPS.push(r);
-        });
-        info.innerHTML = `📊 <strong>${geolocalises}</strong> revendeur(s) géolocalisé(s) sur <strong>${total}</strong>${revendeursSansGPS.length > 0 ? `<br><span style="font-size:13px; color:#666;">⚠️ ${revendeursSansGPS.length} sans GPS</span>` : ''}`;
-        if (!carteGlobale) {
-          carteGlobale = L.map('carte').setView([4.0511, 9.7679], 12);
-          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap', maxZoom: 19 }).addTo(carteGlobale);
-        } else {
-          carteGlobale.eachLayer(layer => { if (layer instanceof L.Marker) carteGlobale.removeLayer(layer); });
-        }
-        setTimeout(() => { carteGlobale.invalidateSize(); }, 100);
-        if (revendeursAvecGPS.length === 0) { liste.innerHTML = '<p style="color:#999;">Aucun revendeur géolocalisé.</p>'; return; }
-        const bounds = [];
-        let html = '';
-        revendeursAvecGPS.forEach(r => {
-          bounds.push([r.latitude, r.longitude]);
-          L.marker([r.latitude, r.longitude]).addTo(carteGlobale).bindPopup(`<strong>👤 ${r.nom}</strong><br>📞 ${r.telephone || '—'}<br>🏘️ ${r.quartier || '—'}<br>🚚 ${r.livreurNom || 'Admin'}`);
-          html += `<div class="carte-revendeur" style="margin-bottom:10px;"><strong>👤 ${r.nom}</strong><br>📞 ${r.telephone || 'Non renseigné'}<br>🏘️ ${r.quartier || 'Non renseigné'}<br>🚚 ${r.livreurNom || 'Admin'}</div>`;
-        });
-        liste.innerHTML = html;
-        if (bounds.length > 0) carteGlobale.fitBounds(bounds, { padding: [30, 30] });
-      } catch (err) { console.error(err); info.innerHTML = '⚠️ Erreur'; }
-    }
+.btn-action:active {
+  transform: scale(0.97);
+  background: #FFF3E0;
+}
 
-    // ===== PARAMÈTRES =====
-    function ouvrirParametres() {
-      afficherEcran('parametres');
-      document.getElementById('pwd-actuel').value = '';
-      document.getElementById('pwd-nouveau').value = '';
-      document.getElementById('pwd-confirme').value = '';
-      document.getElementById('param-erreur').textContent = '';
-      document.getElementById('param-succes').textContent = '';
-      document.getElementById('pwd-app-actuel').value = '';
-      document.getElementById('pwd-app-nouveau').value = '';
-      document.getElementById('pwd-app-confirme').value = '';
-      document.getElementById('param-app-erreur').textContent = '';
-      document.getElementById('param-app-succes').textContent = '';
-    }
+.btn-principal {
+  width: 100%;
+  padding: 18px;
+  font-size: 16px;
+  font-weight: 700;
+  border: none;
+  border-radius: 15px;
+  background: #F57C00;
+  color: white;
+  cursor: pointer;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(245,124,0,0.3);
+}
 
-    async function changerCodeAdmin() {
-      const actuel = document.getElementById('pwd-actuel').value;
-      const nouveau = document.getElementById('pwd-nouveau').value;
-      const confirme = document.getElementById('pwd-confirme').value;
-      const erreur = document.getElementById('param-erreur');
-      const succes = document.getElementById('param-succes');
-      erreur.textContent = '';
-      succes.textContent = '';
-      if (!actuel || !nouveau || !confirme) { erreur.textContent = '❌ Tous les champs sont obligatoires'; return; }
-      if (nouveau.length < 6) { erreur.textContent = '❌ Au moins 6 caractères'; return; }
-      if (nouveau !== confirme) { erreur.textContent = '❌ Les codes ne correspondent pas'; return; }
-      try {
-        const docRef = await db.collection('parametres').doc('admin').get();
-        let codeActuel = 'makanda2026';
-        if (docRef.exists && docRef.data().codeAdmin) codeActuel = docRef.data().codeAdmin;
-        if (actuel !== codeActuel) { erreur.textContent = '❌ Code actuel incorrect'; return; }
-        await db.collection('parametres').doc('admin').set({ codeAdmin: nouveau, dateModification: new Date().toISOString() }, { merge: true });
-        succes.textContent = '✅ Code admin changé !';
-        document.getElementById('pwd-actuel').value = '';
-        document.getElementById('pwd-nouveau').value = '';
-        document.getElementById('pwd-confirme').value = '';
-      } catch (err) { console.error(err); erreur.textContent = '⚠️Erreur'; }
-    }
+.btn-principal:active {
+  transform: scale(0.98);
+}
 
-    async function changerCodeApp() {
-      const actuel = document.getElementById('pwd-app-actuel').value;
-      const nouveau = document.getElementById('pwd-app-nouveau').value;
-      const confirme = document.getElementById('pwd-app-confirme').value;
-      const erreur = document.getElementById('param-app-erreur');
-      const succes = document.getElementById('param-app-succes');
-      erreur.textContent = '';
-      succes.textContent = '';
-      if (!actuel || !nouveau || !confirme) { erreur.textContent = '❌ Tous les champs sont obligatoires'; return; }
-      if (nouveau.length < 6) { erreur.textContent = '❌ Au moins 6 caractères'; return; }
-      if (nouveau !== confirme) { erreur.textContent = '❌ Les codes ne correspondent pas'; return; }
-      try {
-        const docRef = await db.collection('parametres').doc('app').get();
-        let codeActuel = CODE_APP_DEFAUT;
-        if (docRef.exists && docRef.data().codeApp) codeActuel = docRef.data().codeApp;
-        if (actuel !== codeActuel) { erreur.textContent = '❌ Code actuel incorrect'; return; }
-        await db.collection('parametres').doc('app').set({ codeApp: nouveau, dateModification: new Date().toISOString() }, { merge: true });
-        succes.textContent = '✅ Code d\'accès changé !';
-        document.getElementById('pwd-app-actuel').value = '';
-        document.getElementById('pwd-app-nouveau').value = '';
-        document.getElementById('pwd-app-confirme').value = '';
-      } catch (err) { console.error(err); erreur.textContent = '⚠️ Erreur'; }
-    }
+.formulaire {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  margin-bottom: 25px;
+}
 
-    // ===== NOTIFICATIONS =====
-    function jouerSon() {
-      try {
-        const audio = document.getElementById('son-notification');
-        if (audio) {
-          audio.currentTime = 0;
-          audio.play().catch(e => console.log('Son bloqué:', e.message));
-        }
-      } catch (err) { console.log('Erreur son:', err); }
-    }
+.formulaire h3 {
+  color: #F57C00;
+  margin-bottom: 15px;
+  font-size: 18px;
+}
 
-    function demarrerNotifications() {
-      console.log('🔔 Notifications activées');
-      let premierChargement = true;
-      db.collection('commandes').where('statut', '==', 'en_attente').onSnapshot(snapshot => {
-        if (premierChargement) return;
-        snapshot.docChanges().forEach(change => {
-          if (change.type === 'added') {
-            const c = change.doc.data();
-            console.log('🔔 Nouvelle commande:', c.revendeurNom, c.quantite, 'bâtons');
-            jouerSon();
-          }
-        });
-      }, err => console.log('Erreur listener commandes:', err));
-      db.collection('commandes').where('statut', '==', 'livre').onSnapshot(snapshot => {
-        if (premierChargement) { setTimeout(() => { premierChargement = false; }, 2000); return; }
-        snapshot.docChanges().forEach(change => {
-          if (change.type === 'modified') {
-            const c = change.doc.data();
-            console.log('✅ Livraison effectuée:', c.revendeurNom);
-            jouerSon();
-          }
-        });
-      }, err => console.log('Erreur listener livraisons:', err));
-    }
+.formulaire label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 5px;
+  margin-top: 12px;
+}
 
-    window.addEventListener('load', () => {
-      verifierAccesApp();
-      demarrerNotifications();
-    });
-  </script>
-</body>
-</html>
-  
-  
+.formulaire input,
+.formulaire select {
+  width: 100%;
+  padding: 12px;
+  font-size: 15px;
+  border: 2px solid #eee;
+  border-radius: 10px;
+  background: #fafafa;
+  outline: none;
+}
+
+.formulaire input:focus,
+.formulaire select:focus {
+  border-color: #F57C00;
+  background: white;
+}
+
+.gps-zone {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.btn-gps {
+  padding: 10px 15px;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  background: #2196F3;
+  color: white;
+  cursor: pointer;
+}
+
+#rev-gps-info {
+  font-size: 12px;
+  color: #666;
+  flex: 1;
+}
+
+.btn-save {
+  width: 100%;
+  padding: 15px;
+  font-size: 16px;
+  font-weight: 700;
+  border: none;
+  border-radius: 12px;
+  background: #4CAF50;
+  color: white;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.btn-annuler {
+  width: 100%;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  background: #eee;
+  color: #666;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.carte-revendeur {
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  margin-bottom: 10px;
+  font-size: 14px;
+  line-height: 1.6;
+  border-left: 4px solid #F57C00;
+}
+
+.actions-revendeur {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed #eee;
+}
+
+.btn-commande, .btn-historique {
+  flex: 1;
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.btn-commande { background: #4CAF50; color: white; }
+.btn-historique { background: #2196F3; color: white; }
+
+.btn-commande:active, .btn-historique:active {
+  transform: scale(0.97);
+}
+
+.carte-commande {
+  background: #f9f9f9;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  border-left: 4px solid #F57C00;
+}
+
+.commande-info {
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.commande-info span { color: #666; }
+
+.commande-statut {
+  font-size: 13px;
+  font-weight: 700;
+  color: #F57C00;
+  margin-bottom: 10px;
+}
+
+.commande-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-livre, .btn-non-livre {
+  flex: 1;
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  color: white;
+}
+
+.btn-livre { background: #4CAF50; }
+.btn-non-livre { background: #F44336; }
+
+.btn-livre:active, .btn-non-livre:active {
+  transform: scale(0.97);
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  z-index: 999;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.modal.actif { display: flex; }
+
+.modal-contenu {
+  background: white;
+  width: 100%;
+  max-height: 85vh;
+  border-radius: 20px 20px 0 0;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.modal-entete {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #F57C00;
+  color: white;
+  padding: 18px 20px;
+  border-radius: 20px 20px 0 0;
+}
+
+.modal-entete h2 {
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.btn-fermer {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: white;
+  font-size: 20px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.modal-corps {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.filtre-livreur {
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  margin-bottom: 15px;
+}
+
+.filtre-livreur label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.filtre-livreur input[type="date"] {
+  width: 100%;
+  padding: 12px;
+  font-size: 15px;
+  border: 2px solid #eee;
+  border-radius: 10px;
+  background: #fafafa;
+  margin-bottom: 10px;
+}
+
+.filtre-livreur .btn-principal {
+  margin-bottom: 0;
+}
+
+#info-livreur {
+  font-weight: 700;
+  font-size: 15px;
+  color: #F57C00;
+}and 
+/* ═══════════════════════════════════════════════════════ */
+/* 📊 NOUVEAUX BLOCS RÉCAP (Jour + Semaine)                */
+/* ═══════════════════════════════════════════════════════ */
+
+.bloc-recap {
+  animation: fadeInRecap 0.4s ease;
+}
+
+@keyframes fadeInRecap {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Force la lisibilité sur mobile */
+.bloc-recap > div {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Harmonise avec la charte Atangana Bread */
+.bloc-recap div[style*="font-weight:800"],
+.bloc-recap strong {
+  letter-spacing: 0.3px;
+}
+
+/* Responsive : réduit un peu sur petits écrans */
+@media (max-width: 380px) {
+  .bloc-recap {
+    padding: 12px !important;
+  }
+  .bloc-recap div[style*="font-size:22px"],
+  .bloc-recap div[style*="font-size:20px"] {
+    font-size: 18px !important;
+  }
+  .bloc-recap div[style*="font-size:16px"] {
+    font-size: 14px !important;
+  }
+}
+
+/* Améliore la lisibilité du bloc "Récap livreur" */
+#livreur-recap {
+  margin-bottom: 15px;
+}
+
+/* Petit séparateur visuel après le récap admin */
+#admin-recap-semaine {
+  margin-bottom: 5px;
+}
