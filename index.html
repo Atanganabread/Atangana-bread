@@ -47,7 +47,7 @@
     <div class="contenu">
       <div class="formulaire" style="margin-top:20px;">
         <h3>🔐 Accès sécurisé</h3>
-        <p style="color:#666; font-size:14px; margin-bottom:15px;">Entrez le code d'accès administrateur</p>
+        <p style="color:#666; font-size:14px; margin-bottom:15px;">Entrez votre code d'accès</p>
         <label>Code d'accès</label>
         <input type="password" id="login-admin-code" placeholder="••••••••" autocomplete="off">
         <button class="btn-save" onclick="connecterAdmin()">🔓 Se connecter</button>
@@ -58,14 +58,13 @@
 
   <div id="ecran-admin" class="ecran">
     <header class="entete">
-      <h2>👑 Administrateur</h2>
+      <h2 id="titre-admin-connecte">👑 Administrateur</h2>
       <button class="btn-deco" onclick="deconnecter()">🚪</button>
     </header>
     <div class="contenu">
       <h3>📊 Tableau de bord</h3>
       <p id="info-admin">Chargement...</p>
 
-      <!-- ===== NOUVEAU : RÉCAP ADMIN JOUR + SEMAINE ===== -->
       <div id="admin-recap-jour" style="background:linear-gradient(135deg,#FFF3E0,#FFE0B2); padding:18px; border-radius:14px; margin-top:20px; border-left:5px solid #F57C00; box-shadow:0 3px 10px rgba(0,0,0,0.06);">
         <div style="font-size:15px; color:#E65100; font-weight:700; margin-bottom:12px;">📅 Aujourd'hui — <span id="admin-recap-jour-date" style="font-weight:400;"></span></div>
         <div style="display:flex; gap:12px;">
@@ -93,7 +92,6 @@
           </div>
         </div>
       </div>
-      <!-- ===== FIN NOUVEAU ===== -->
 
       <div class="grille-boutons" style="margin-top:20px;">
         <button class="btn-action" onclick="ouvrirRevendeurs()">👥 Revendeurs</button>
@@ -101,7 +99,7 @@
         <button class="btn-action" onclick="ouvrirLivraisonsGlobales()">✅ Livraisons</button>
         <button class="btn-action" onclick="ouvrirCommandesGlobales()">📦 Commandes</button>
         <button class="btn-action" onclick="ouvrirCarteRevendeurs()">🗺️ Carte</button>
-        <button class="btn-action" onclick="ouvrirParametres()">⚙️ Paramètres</button>
+        <button class="btn-action" id="btn-parametres-admin" onclick="ouvrirParametres()" style="display:none;">⚙️ Paramètres</button>
       </div>
     </div>
   </div>
@@ -139,7 +137,6 @@
         <button class="btn-principal" onclick="chargerLivraisonsLivreur()">🔄 Actualiser</button>
       </div>
 
-      <!-- ===== NOUVEAU : RÉCAP LIVREUR ===== -->
       <div id="livreur-recap" style="background:linear-gradient(135deg,#FFF3E0,#FFE0B2); padding:15px; border-radius:14px; margin-top:15px; border-left:5px solid #F57C00; box-shadow:0 3px 10px rgba(0,0,0,0.06);">
         <div style="font-size:14px; color:#E65100; font-weight:700; margin-bottom:10px;">📊 Récap de la journée</div>
         <div style="display:flex; gap:10px;">
@@ -159,7 +156,6 @@
           </div>
         </div>
       </div>
-      <!-- ===== FIN NOUVEAU ===== -->
 
       <p id="info-livreur" style="margin-top:15px;"></p>
       <div id="liste-livraisons"></div>
@@ -268,7 +264,6 @@
         <span style="color:#666; font-size:14px;">📞 <span id="rev-info-tel">—</span></span>
       </div>
 
-      <!-- ===== NOUVEAU : RÉCAP REVENDEUR JOUR + SEMAINE ===== -->
       <div id="rev-recap-jour" style="background:linear-gradient(135deg,#FFF3E0,#FFE0B2); padding:16px; border-radius:14px; margin-bottom:15px; border-left:5px solid #F57C00; box-shadow:0 3px 10px rgba(0,0,0,0.06);">
         <div style="font-size:14px; color:#E65100; font-weight:700; margin-bottom:10px;">📅 Aujourd'hui — <span id="rev-recap-jour-date" style="font-weight:400;"></span></div>
         <div style="display:flex; gap:10px;">
@@ -296,7 +291,6 @@
           </div>
         </div>
       </div>
-      <!-- ===== FIN NOUVEAU ===== -->
 
       <div style="background:#FFF3E0; padding:15px; border-radius:12px; margin-bottom:20px; border-left:4px solid #F57C00;">
         <strong style="color:#F57C00; font-size:14px;">📞 Contact en cas de souci</strong>
@@ -441,9 +435,36 @@
       <span style="width:40px"></span>
     </header>
     <div class="contenu">
-      <div class="formulaire">
-        <h3>🔐 Changer le code administrateur</h3>
-        <p style="color:#666; font-size:14px; margin-bottom:15px;">Le code actuel protège votre accès admin.</p>
+
+      <div class="formulaire" style="border-left:5px solid #9C27B0;">
+        <h3 style="color:#9C27B0;">👥 Gestion des administrateurs</h3>
+        <p style="color:#666; font-size:13px; margin-bottom:15px;">Ajoutez, activez ou désactivez les collaborateurs qui ont accès à l'espace Admin.</p>
+
+        <div id="liste-admins" style="margin-bottom:15px;">
+          <p style="color:#999;">⏳ Chargement...</p>
+        </div>
+
+        <div id="form-nouvel-admin" class="formulaire" style="display:none; background:#F9F5FB; border:2px dashed #9C27B0;">
+          <h3 style="color:#9C27B0;">➕ Nouvel administrateur</h3>
+          <label>Nom complet</label>
+          <input type="text" id="new-admin-nom" placeholder="Ex: Jean Mbarga">
+          <label>Code d'accès (min. 6 caractères)</label>
+          <input type="password" id="new-admin-code" placeholder="••••••••" autocomplete="off">
+          <label>Confirmer le code</label>
+          <input type="password" id="new-admin-code2" placeholder="••••••••" autocomplete="off">
+          <button class="btn-save" onclick="ajouterAdmin()">💾 Créer l'administrateur</button>
+          <button class="btn-annuler" onclick="fermerFormNouvelAdmin()">Annuler</button>
+        </div>
+
+        <button class="btn-principal" id="btn-ajouter-admin" onclick="ouvrirFormNouvelAdmin()" style="background:#9C27B0; box-shadow:0 4px 12px rgba(156,39,176,0.3);">➕ Ajouter un administrateur</button>
+
+        <p id="admin-gestion-erreur" style="color:#F44336; text-align:center; font-weight:600; margin-top:10px;"></p>
+        <p id="admin-gestion-succes" style="color:#4CAF50; text-align:center; font-weight:600; margin-top:10px;"></p>
+      </div>
+
+      <div class="formulaire" style="margin-top:30px;">
+        <h3>🔐 Changer le code administrateur principal</h3>
+        <p style="color:#666; font-size:14px; margin-bottom:15px;">Le code actuel protège votre accès Super-admin.</p>
         <label>Code actuel</label>
         <input type="password" id="pwd-actuel" placeholder="••••••••" autocomplete="off">
         <label>Nouveau code</label>
@@ -486,7 +507,7 @@
   <audio id="son-notification" preload="auto">
     <source src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" type="audio/ogg">
   </audio>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script>
     const firebaseConfig = {
@@ -514,10 +535,9 @@
     let adminBloque = false;
     let adminBloqueJusqua = 0;
     let carteGlobale = null;
+    let adminConnecte = null;
+    let listenerAdminActif = null;
 
-    // ═══════════════════════════════════════════════════════
-    // 🔧 FONCTIONS UTILITAIRES : DATE ET SEMAINE (Mar → Dim)
-    // ═══════════════════════════════════════════════════════
     function getDateAujourdhui() {
       const d = new Date();
       const y = d.getFullYear();
@@ -526,10 +546,9 @@
       return `${y}-${m}-${j}`;
     }
 
-    // Retourne les dates [mardi...dimanche] de la semaine en cours (lundi exclu)
     function getDatesSemaineCourante() {
       const aujourdhui = new Date();
-      const jour = aujourdhui.getDay(); // 0=dim, 1=lun, 2=mar, ..., 6=sam
+      const jour = aujourdhui.getDay();
       let joursDepuisMardi;
       if (jour === 0) joursDepuisMardi = 5;
       else if (jour === 1) joursDepuisMardi = -1;
@@ -569,7 +588,6 @@
       if (ecran) ecran.classList.add('actif');
     }
 
-    // ===== PROTECTION GLOBALE =====
     async function verifierCodeApp() {
       const codeSaisi = document.getElementById('app-code').value;
       const erreur = document.getElementById('app-code-erreur');
@@ -605,7 +623,6 @@
       }
     }
 
-    // ===== LOGIN ADMIN =====
     async function connecterAdmin() {
       const codeSaisi = document.getElementById('login-admin-code').value;
       const erreur = document.getElementById('login-admin-erreur');
@@ -622,18 +639,66 @@
         let codeAttendu = 'makanda2026';
         if (docRef.exists && docRef.data().codeAdmin) { codeAttendu = docRef.data().codeAdmin; }
         else { await db.collection('parametres').doc('admin').set({ codeAdmin: 'makanda2026', dateCreation: new Date().toISOString() }); }
-        if (codeSaisi !== codeAttendu) {
-          tentativesAdmin++;
-          erreur.textContent = `❌ Code incorrect (${tentativesAdmin}/5)`;
+
+        if (codeSaisi === codeAttendu) {
+          tentativesAdmin = 0; adminBloque = false;
+          adminConnecte = { id: 'super', nom: 'Administrateur principal', role: 'super' };
           document.getElementById('login-admin-code').value = '';
-          if (tentativesAdmin >= 5) { adminBloque = true; adminBloqueJusqua = Date.now() + 5 * 60 * 1000; erreur.textContent = '⏸️ Trop d\'essais. Attendez 5 minutes.'; }
+          document.getElementById('titre-admin-connecte').textContent = '👑 Administrateur principal';
+          document.getElementById('btn-parametres-admin').style.display = 'block';
+          afficherEcran('admin');
+          chargerInfosAdmin();
+          demarrerListenerAdmin('super');
           return;
         }
-        tentativesAdmin = 0; adminBloque = false;
+
+        const snapCollab = await db.collection('administrateurs').where('code', '==', codeSaisi).get();
+        if (!snapCollab.empty) {
+          const collabDoc = snapCollab.docs[0];
+          const collabData = collabDoc.data();
+          if (collabData.statut === 'desactive') {
+            erreur.textContent = '🚫 Votre accès a été révoqué par l\'administrateur principal';
+            document.getElementById('login-admin-code').value = '';
+            return;
+          }
+          tentativesAdmin = 0; adminBloque = false;
+          adminConnecte = { id: collabDoc.id, nom: collabData.nom, role: 'admin' };
+          document.getElementById('login-admin-code').value = '';
+          document.getElementById('titre-admin-connecte').textContent = '👤 ' + collabData.nom;
+          document.getElementById('btn-parametres-admin').style.display = 'none';
+          afficherEcran('admin');
+          chargerInfosAdmin();
+          demarrerListenerAdmin(collabDoc.id);
+          return;
+        }
+
+        tentativesAdmin++;
+        erreur.textContent = `❌ Code incorrect (${tentativesAdmin}/5)`;
         document.getElementById('login-admin-code').value = '';
-        afficherEcran('admin');
-        chargerInfosAdmin();
+        if (tentativesAdmin >= 5) { adminBloque = true; adminBloqueJusqua = Date.now() + 5 * 60 * 1000; erreur.textContent = '⏸️ Trop d\'essais. Attendez 5 minutes.'; }
       } catch (err) { console.error(err); erreur.textContent = '⚠️ Erreur : ' + err.message; }
+    }
+
+    function demarrerListenerAdmin(adminId) {
+      if (listenerAdminActif) { listenerAdminActif(); listenerAdminActif = null; }
+      if (adminId === 'super') return;
+      listenerAdminActif = db.collection('administrateurs').doc(adminId).onSnapshot(doc => {
+        if (!doc.exists) { forcerDeconnexionAdmin('🚫 Votre compte a été supprimé'); return; }
+        const data = doc.data();
+        if (data.statut === 'desactive') {
+          forcerDeconnexionAdmin('🚫 Votre accès a été révoqué par l\'administrateur principal');
+        }
+      });
+    }
+
+    function forcerDeconnexionAdmin(message) {
+      alert(message);
+      if (listenerAdminActif) { listenerAdminActif(); listenerAdminActif = null; }
+      adminConnecte = null;
+      document.getElementById('btn-parametres-admin').style.display = 'none';
+      document.getElementById('login-admin-code').value = '';
+      document.getElementById('login-admin-erreur').textContent = message;
+      afficherEcran('connexion');
     }
 
     function choisirRole(role) {
@@ -642,7 +707,12 @@
       else if (role === 'revendeur') { afficherEcran('login-revendeur'); chargerRevendeursDansLogin(); }
     }
 
-    function deconnecter() { afficherEcran('connexion'); }
+    function deconnecter() {
+      if (listenerAdminActif) { listenerAdminActif(); listenerAdminActif = null; }
+      adminConnecte = null;
+      document.getElementById('btn-parametres-admin').style.display = 'none';
+      afficherEcran('connexion');
+    }
 
     async function chargerRevendeursDansLogin() {
       try {
@@ -692,9 +762,6 @@
       chargerRevendeursDansLogin();
     }
 
-    // ═══════════════════════════════════════════════════════
-    // 📊 RÉCAP REVENDEUR (jour + semaine)
-    // ═══════════════════════════════════════════════════════
     async function chargerRecapRevendeur() {
       if (!revendeurConnecte) return;
       const dateJour = getDateAujourdhui();
@@ -807,9 +874,7 @@
         chargerRecapRevendeur();
       } catch (err) { console.error(err); alert('❌ Erreur : ' + err.message); }
     }
-
-      // ===== LOGIN LIVREUR =====
-    async function chargerLivreursDansLogin() {
+        async function chargerLivreursDansLogin() {
       try {
         const snap = await db.collection('livreurs').get();
         const select = document.getElementById('login-livreur-nom');
@@ -857,9 +922,6 @@
       chargerLivreursDansLogin();
     }
 
-    // ═══════════════════════════════════════════════════════
-    // 📊 RÉCAP ADMIN (jour + semaine)
-    // ═══════════════════════════════════════════════════════
     async function chargerRecapAdmin() {
       const dateJour = getDateAujourdhui();
       const datesSemaine = getDatesSemaineCourante();
@@ -906,7 +968,6 @@
       chargerRecapAdmin();
     }
 
-    // ===== REVENDEURS =====
     function pagePrecedente() { if (pageActuelle > 1) { pageActuelle--; chargerListeRevendeurs(); } }
     function pageSuivante() { pageActuelle++; chargerListeRevendeurs(); }
 
@@ -1216,7 +1277,6 @@
       } catch (err) { console.error(err); alert('❌ Erreur'); }
     }
 
-    // ===== LIVREURS =====
     function ouvrirLivreurs() { afficherEcran('livreurs'); chargerListeLivreurs(); }
 
     function ouvrirFormulaireLivreur() {
@@ -1274,7 +1334,6 @@
       } catch (err) { console.error(err); }
     }
 
-    // ===== COMMANDES GLOBALES =====
     function ouvrirCommandesGlobales() {
       afficherEcran('commandes');
       const dateInput = document.getElementById('commandes-date');
@@ -1315,7 +1374,6 @@
       } catch (err) { console.error(err); stats.innerHTML = '⚠️ Erreur'; }
     }
 
-    // ===== LIVRAISONS GLOBALES =====
     function ouvrirLivraisonsGlobales() {
       afficherEcran('livraisons');
       const dateInput = document.getElementById('livraisons-date');
@@ -1370,7 +1428,6 @@
       } catch (err) { console.error(err); stats.innerHTML = '⚠️ Erreur'; }
     }
 
-    // ===== CARTE =====
     function ouvrirCarteRevendeurs() { afficherEcran('carte'); chargerCarteRevendeurs(); }
 
     async function chargerCarteRevendeurs() {
@@ -1410,7 +1467,6 @@
       } catch (err) { console.error(err); info.innerHTML = '⚠️ Erreur'; }
     }
 
-    // ===== PARAMÈTRES =====
     function ouvrirParametres() {
       afficherEcran('parametres');
       document.getElementById('pwd-actuel').value = '';
@@ -1423,6 +1479,11 @@
       document.getElementById('pwd-app-confirme').value = '';
       document.getElementById('param-app-erreur').textContent = '';
       document.getElementById('param-app-succes').textContent = '';
+      document.getElementById('admin-gestion-erreur').textContent = '';
+      document.getElementById('admin-gestion-succes').textContent = '';
+      document.getElementById('form-nouvel-admin').style.display = 'none';
+      document.getElementById('btn-ajouter-admin').style.display = 'block';
+      chargerGestionAdmins();
     }
 
     async function changerCodeAdmin() {
@@ -1473,7 +1534,118 @@
       } catch (err) { console.error(err); erreur.textContent = '⚠️ Erreur'; }
     }
 
-    // ===== NOTIFICATIONS =====
+    async function chargerGestionAdmins() {
+      const liste = document.getElementById('liste-admins');
+      liste.innerHTML = '<p style="color:#999;">⏳ Chargement...</p>';
+      try {
+        const snap = await db.collection('administrateurs').get();
+        let html = `<div class="carte-revendeur" style="border-left-color:#9C27B0; margin-bottom:10px;">
+          <strong>👑 Administrateur principal (Vous)</strong><br>
+          <span style="font-size:12px; color:#666;">Accès complet + Paramètres</span><br>
+          <span style="display:inline-block; margin-top:6px; padding:4px 10px; background:#E8F5E9; color:#2E7D32; border-radius:6px; font-size:11px; font-weight:700;">✅ Protégé</span>
+        </div>`;
+        if (snap.empty) {
+          html += '<p style="color:#999; font-size:14px; text-align:center; padding:10px;">Aucun collaborateur pour l\'instant.</p>';
+        } else {
+          snap.forEach(doc => {
+            const a = doc.data();
+            const actif = a.statut === 'actif';
+            const badge = actif
+              ? '<span style="display:inline-block; margin-top:6px; padding:4px 10px; background:#E8F5E9; color:#2E7D32; border-radius:6px; font-size:11px; font-weight:700;">✅ Actif</span>'
+              : '<span style="display:inline-block; margin-top:6px; padding:4px 10px; background:#FFEBEE; color:#C62828; border-radius:6px; font-size:11px; font-weight:700;">🚫 Désactivé</span>';
+            html += `<div class="carte-revendeur" style="border-left-color:${actif ? '#4CAF50' : '#9E9E9E'}; margin-bottom:10px;">
+              <strong>👤 ${a.nom}</strong><br>
+              <span style="font-size:12px; color:#666;">Code : ••••••</span><br>
+              ${badge}
+              <div style="display:flex; gap:8px; margin-top:10px;">
+                ${actif
+                  ? `<button onclick="desactiverAdmin('${doc.id}')" style="flex:1; padding:8px; background:#FF9800; color:white; border:none; border-radius:8px; font-weight:600; font-size:12px; cursor:pointer;">🔴 Désactiver</button>`
+                  : `<button onclick="reactiverAdmin('${doc.id}')" style="flex:1; padding:8px; background:#4CAF50; color:white; border:none; border-radius:8px; font-weight:600; font-size:12px; cursor:pointer;">🟢 Réactiver</button>`}
+                <button onclick="supprimerAdmin('${doc.id}', '${a.nom.replace(/'/g, "\\'")}')" style="flex:1; padding:8px; background:#F44336; color:white; border:none; border-radius:8px; font-weight:600; font-size:12px; cursor:pointer;">🗑️ Supprimer</button>
+              </div>
+            </div>`;
+          });
+        }
+        liste.innerHTML = html;
+      } catch (err) { console.error(err); liste.innerHTML = '<p style="color:red;">⚠️ Erreur</p>'; }
+    }
+
+    function ouvrirFormNouvelAdmin() {
+      document.getElementById('form-nouvel-admin').style.display = 'block';
+      document.getElementById('new-admin-nom').value = '';
+      document.getElementById('new-admin-code').value = '';
+      document.getElementById('new-admin-code2').value = '';
+      document.getElementById('admin-gestion-erreur').textContent = '';
+      document.getElementById('admin-gestion-succes').textContent = '';
+      document.getElementById('btn-ajouter-admin').style.display = 'none';
+    }
+
+    function fermerFormNouvelAdmin() {
+      document.getElementById('form-nouvel-admin').style.display = 'none';
+      document.getElementById('btn-ajouter-admin').style.display = 'block';
+    }
+
+    async function ajouterAdmin() {
+      const nom = document.getElementById('new-admin-nom').value.trim();
+      const code = document.getElementById('new-admin-code').value;
+      const code2 = document.getElementById('new-admin-code2').value;
+      const erreur = document.getElementById('admin-gestion-erreur');
+      const succes = document.getElementById('admin-gestion-succes');
+      erreur.textContent = '';
+      succes.textContent = '';
+      if (!nom) { erreur.textContent = '❌ Le nom est obligatoire'; return; }
+      if (!code || code.length < 6) { erreur.textContent = '❌ Le code doit contenir au moins 6 caractères'; return; }
+      if (code !== code2) { erreur.textContent = '❌ Les codes ne correspondent pas'; return; }
+      try {
+        const docRef = await db.collection('parametres').doc('admin').get();
+        let codeSuper = 'makanda2026';
+        if (docRef.exists && docRef.data().codeAdmin) codeSuper = docRef.data().codeAdmin;
+        if (code === codeSuper) { erreur.textContent = '❌ Ce code est déjà utilisé par l\'admin principal'; return; }
+
+        const checkCode = await db.collection('administrateurs').where('code', '==', code).get();
+        if (!checkCode.empty) { erreur.textContent = '❌ Ce code est déjà utilisé par un autre admin'; return; }
+
+        await db.collection('administrateurs').add({
+          nom: nom,
+          code: code,
+          statut: 'actif',
+          dateCreation: new Date().toISOString()
+        });
+        succes.textContent = '✅ Administrateur créé !';
+        fermerFormNouvelAdmin();
+        chargerGestionAdmins();
+      } catch (err) { console.error(err); erreur.textContent = '⚠️ Erreur : ' + err.message; }
+    }
+
+    async function desactiverAdmin(adminId) {
+      if (!confirm('Voulez-vous vraiment désactiver cet administrateur ?\nIl sera déconnecté immédiatement.')) return;
+      try {
+        await db.collection('administrateurs').doc(adminId).update({ statut: 'desactive', dateModification: new Date().toISOString() });
+        document.getElementById('admin-gestion-succes').textContent = '✅ Administrateur désactivé';
+        document.getElementById('admin-gestion-erreur').textContent = '';
+        chargerGestionAdmins();
+      } catch (err) { console.error(err); document.getElementById('admin-gestion-erreur').textContent = '⚠️ Erreur'; }
+    }
+
+    async function reactiverAdmin(adminId) {
+      try {
+        await db.collection('administrateurs').doc(adminId).update({ statut: 'actif', dateModification: new Date().toISOString() });
+        document.getElementById('admin-gestion-succes').textContent = '✅ Administrateur réactivé';
+        document.getElementById('admin-gestion-erreur').textContent = '';
+        chargerGestionAdmins();
+      } catch (err) { console.error(err); document.getElementById('admin-gestion-erreur').textContent = '⚠️ Erreur'; }
+    }
+
+    async function supprimerAdmin(adminId, nom) {
+      if (!confirm('Voulez-vous vraiment SUPPRIMER définitivement ' + nom + ' ?\nCette action est irréversible.')) return;
+      try {
+        await db.collection('administrateurs').doc(adminId).delete();
+        document.getElementById('admin-gestion-succes').textContent = '✅ Administrateur supprimé';
+        document.getElementById('admin-gestion-erreur').textContent = '';
+        chargerGestionAdmins();
+      } catch (err) { console.error(err); document.getElementById('admin-gestion-erreur').textContent = '⚠️ Erreur'; }
+    }
+
     function jouerSon() {
       try {
         const audio = document.getElementById('son-notification');
@@ -1516,4 +1688,3 @@
   </script>
 </body>
 </html>
-  
