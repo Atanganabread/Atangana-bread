@@ -489,3 +489,130 @@ body {
 #admin-recap-semaine {
   margin-bottom: 5px;
 }
+/* ═══════════════════════════════════════════════════════ */
+/* 👥 BLOC GESTION DES ADMINISTRATEURS                     */
+/* ═══════════════════════════════════════════════════════ */
+
+#liste-admins {
+  margin-top: 10px;
+}
+
+/* Carte d'un administrateur */
+.admin-card {
+  background: #F9F5FB;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  border-left: 4px solid #9C27B0;
+  box-shadow: 0 2px 6px rgba(156, 39, 176, 0.08);
+}
+
+.admin-card.super-admin {
+  background: linear-gradient(135deg, #F3E5F5, #E1BEE7);
+  border-left-color: #6A1B9A;
+}
+
+.admin-card.desactive {
+  opacity: 0.7;
+  border-left-color: #9E9E9E;
+}
+
+.admin-nom {
+  font-size: 15px;
+  font-weight: 700;
+  color: #4A148C;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.admin-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.badge-protege { background: #E8F5E9; color: #2E7D32; }
+.badge-actif { background: #E8F5E9; color: #2E7D32; }
+.badge-desactive { background: #FFEBEE; color: #C62828; }
+
+.admin-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed #ddd;
+}
+
+.btn-admin-desactiver,
+.btn-admin-reactiver,
+.btn-admin-supprimer {
+  flex: 1;
+  padding: 10px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: white;
+  transition: transform 0.1s;
+}
+
+.btn-admin-desactiver { background: #FF9800; }
+.btn-admin-reactiver { background: #4CAF50; }
+.btn-admin-supprimer { background: #F44336; }
+
+.btn-admin-desactiver:active,
+.btn-admin-reactiver:active,
+.btn-admin-supprimer:active {
+  transform: scale(0.96);
+}
+
+/* Bouton Ajouter un administrateur */
+#btn-ajouter-admin {
+  background: linear-gradient(135deg, #9C27B0, #6A1B9A) !important;
+  box-shadow: 0 4px 14px rgba(156, 39, 176, 0.4) !important;
+  font-weight: 700;
+  margin-top: 15px;
+}
+
+#btn-ajouter-admin:active {
+  transform: scale(0.98);
+}
+
+/* Formulaire Nouvel admin */
+#form-nouvel-admin {
+  background: #F9F5FB;
+  border: 2px dashed #9C27B0;
+  padding: 18px;
+  border-radius: 14px;
+  margin-top: 15px;
+  animation: fadeInRecap 0.3s ease;
+}
+
+#form-nouvel-admin h3 {
+  color: #6A1B9A;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+#form-nouvel-admin input {
+  border-color: #E1BEE7;
+}
+
+#form-nouvel-admin input:focus {
+  border-color: #9C27B0;
+}
+
+#form-nouvel-admin .btn-save {
+  background: linear-gradient(135deg, #9C27B0, #6A1B9A);
+  box-shadow: 0 4px 12px rgba(156, 39, 176, 0.3);
+}
+
+#admin-gestion-erreur,
+#admin-gestion-succes {
+  font-size: 14px;
+  padding: 8px 0;
+}
