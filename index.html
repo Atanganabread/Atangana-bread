@@ -505,22 +505,16 @@
       window.scrollTo(0,0);
     }
 
-    // ===== CODE APP (Firestore direct) =====
-    async function verifierCodeApp() {
+    // ===== CODE APP (Vérification locale pour contourner l'erreur de permission) =====
+    function verifierCodeApp() {
       const c = document.getElementById('app-code').value;
       const err = document.getElementById('app-code-erreur');
       err.textContent = '';
       if (!c) { err.textContent = '❌ Entrez le code'; return; }
-      try {
-        const ref = await db.collection('parametres').doc('app').get();
-        let attendu = CODE_APP_DEFAUT;
-        if (ref.exists && ref.data().codeApp) attendu = ref.data().codeApp;
-        else await db.collection('parametres').doc('app').set({ codeApp: CODE_APP_DEFAUT, dateCreation: new Date().toISOString() });
-        if (c !== attendu) { err.textContent='❌ Code incorrect'; document.getElementById('app-code').value=''; return; }
-        localStorage.setItem('appDebloquee','oui');
-        document.getElementById('app-code').value='';
-        afficherEcran('connexion');
-      } catch (e) { console.error(e); err.textContent = '⚠️ Erreur : ' + e.message; }
+      if (c !== CODE_APP_DEFAUT) { err.textContent='❌ Code incorrect'; document.getElementById('app-code').value=''; return; }
+      localStorage.setItem('appDebloquee','oui');
+      document.getElementById('app-code').value='';
+      afficherEcran('connexion');
     }
     function verifierAccesApp(){
       if (localStorage.getItem('appDebloquee')==='oui') afficherEcran('connexion');
